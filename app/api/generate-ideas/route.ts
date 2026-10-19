@@ -1,1 +1,157 @@
-import {NextResponse} from "next/server";import {createClient} from "@/lib/supabase/server";export const runtime="nodejs";const samples=[{title:"Briefly Studio",description:"Turn long client briefs into clear, prioritized project plans freelancers can act on in minutes.",targetAudience:"Independent designers and freelance studios",whyNow:"Small teams are adopting AI but still need structured workflows that preserve judgment.",difficulty:"Medium",monetization:"$12–19/month per workspace",category:"Creator tools"},{title:"QuietHours",description:"A gentle focus planner that helps solo builders protect deep-work windows and communicate availability.",targetAudience:"Solo founders, creators, and remote freelancers",whyNow:"Async work is normal, and people want fewer interruptions without heavyweight tools.",difficulty:"Easy",monetization:"Free tier + $6/month Pro",category:"Productivity"},{title:"ClientCurrent",description:"One client-facing page that turns project updates, next steps, and approvals into a calm shared pulse.",targetAudience:"Freelancers managing 3–10 active clients",whyNow:"Clients expect transparency, but freelancers don't want a full project-management suite.",difficulty:"Medium",monetization:"$9/month or $79/year",category:"Freelance ops"},{title:"TinyTender",description:"A lightweight opportunity tracker for niche consultants watching relevant small-business tenders.",targetAudience:"Independent consultants and specialist agencies",whyNow:"Niche operators need better signal-to-noise than broad enterprise intelligence platforms.",difficulty:"Hard",monetization:"$19–29/month by saved searches",category:"Research"},{title:"ProofPocket",description:"Collect customer quotes, outcomes, and permission in one shareable mini-library for early-stage businesses.",targetAudience:"Small SaaS teams and solo founders",whyNow:"Trust drives conversion, but small teams need an alternative to sprawling case-study workflows.",difficulty:"Easy",monetization:"$8/month or a one-time starter plan",category:"Marketing"}];export async function POST(request:Request){const supabase=await createClient();const {data:{user}}=await supabase.auth.getUser();if(!user)return NextResponse.json({error:"Sign in to generate ideas."},{status:401});let body:Record<string,unknown>;try{body=await request.json();}catch{return NextResponse.json({error:"Invalid request body."},{status:400});}const goals=typeof body.goals==="string"?body.goals.slice(0,2000):"";const skills=typeof body.skills==="string"?body.skills.slice(0,2000):"";const interests=typeof body.interests==="string"?body.interests.slice(0,2000):"";const apiKey=process.env.OPENAI_API_KEY;if(!apiKey)return NextResponse.json({ideas:samples,source:"sample"});const base=(process.env.AI_BASE_URL||"https://api.openai.com/v1").replace(/\/$/,"");try{const response=await fetch(base+"/chat/completions",{method:"POST",headers:{Authorization:"Bearer "+apiKey,"Content-Type":"application/json"},body:JSON.stringify({model:process.env.AI_MODEL||"gpt-4o-mini",temperature:.8,response_format:{type:"json_object"},messages:[{role:"system",content:"You are a pragmatic product strategist. Generate exactly 5 distinct, testable micro-SaaS or digital product hypotheses. Never claim demand is proven. Return JSON with an ideas array. Each idea must have title, description, targetAudience, whyNow (specific to 2026), difficulty (Easy, Medium, or Hard), monetization, and category."},{role:"user",content:"Builder goals: "+(goals||"Find a feasible product idea")+"\nSkills: "+(skills||"Not specified")+"\nInterests: "+(interests||"Not specified")+"\nPrefer focused MVPs, clear audiences, and testable problems. Avoid generic AI wrappers."}]}),signal:AbortSignal.timeout(25000)});if(!response.ok)return NextResponse.json({error:"AI provider failed. Check your API key, model, and provider settings."},{status:502});const data=await response.json();const parsed=JSON.parse(data.choices?.[0]?.message?.content||"{}");if(!Array.isArray(parsed.ideas)||!parsed.ideas.length)throw new Error("Invalid payload");const ideas=parsed.ideas.slice(0,5).map((v:Record<string,unknown>)=>({title:String(v.title||"Untitled").slice(0,100),description:String(v.description||"").slice(0,500),targetAudience:String(v.targetAudience||"").slice(0,250),whyNow:String(v.whyNow||"").slice(0,400),difficulty:["Easy","Medium","Hard"].includes(String(v.difficulty))?v.difficulty:"Medium",monetization:String(v.monetization||"").slice(0,200),category:String(v.category||"Micro-SaaS").slice(0,80)}));return NextResponse.json({ideas,source:"ai"});}catch{return NextResponse.json({error:"AI response could not be processed. Please try again."},{status:502});}}
+import { NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
+
+export const runtime = "nodejs";
+
+const samples = [
+  {
+    title: "Briefly Studio",
+    description: "Turn long client briefs into clear, prioritized project plans freelancers can act on in minutes.",
+    targetAudience: "Independent designers and freelance studios",
+    whyNow: "Small teams are adopting AI but still need structured workflows that preserve judgment.",
+    difficulty: "Medium",
+    monetization: "$12–19/month per workspace",
+    category: "Creator tools",
+  },
+  {
+    title: "QuietHours",
+    description: "A gentle focus planner that helps solo builders protect deep-work windows and communicate availability.",
+    targetAudience: "Solo founders, creators, and remote freelancers",
+    whyNow: "Async work is normal, and people want fewer interruptions without heavyweight tools.",
+    difficulty: "Easy",
+    monetization: "Free tier + $6/month Pro",
+    category: "Productivity",
+  },
+  {
+    title: "ClientCurrent",
+    description: "One client-facing page that turns project updates, next steps, and approvals into a calm shared pulse.",
+    targetAudience: "Freelancers managing 3–10 active clients",
+    whyNow: "Clients expect transparency, but freelancers don't want a full project-management suite.",
+    difficulty: "Medium",
+    monetization: "$9/month or $79/year",
+    category: "Freelance ops",
+  },
+  {
+    title: "TinyTender",
+    description: "A lightweight opportunity tracker for niche consultants watching relevant small-business tenders.",
+    targetAudience: "Independent consultants and specialist agencies",
+    whyNow: "Niche operators need better signal-to-noise than broad enterprise intelligence platforms.",
+    difficulty: "Hard",
+    monetization: "$19–29/month by saved searches",
+    category: "Research",
+  },
+  {
+    title: "ProofPocket",
+    description: "Collect customer quotes, outcomes, and permission in one shareable mini-library for early-stage businesses.",
+    targetAudience: "Small SaaS teams and solo founders",
+    whyNow: "Trust drives conversion, but small teams need an alternative to sprawling case-study workflows.",
+    difficulty: "Easy",
+    monetization: "$8/month or a one-time starter plan",
+    category: "Marketing",
+  },
+];
+
+export async function POST(request: Request) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json({ error: "Sign in to generate ideas." }, { status: 401 });
+  }
+
+  let body: Record<string, unknown>;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
+  }
+
+  const goals = typeof body.goals === "string" ? body.goals.slice(0, 2000) : "";
+  const skills = typeof body.skills === "string" ? body.skills.slice(0, 2000) : "";
+  const interests = typeof body.interests === "string" ? body.interests.slice(0, 2000) : "";
+
+  // Gemini is preferred when GEMINI_API_KEY is configured. OpenAI remains supported as a fallback.
+  const geminiKey = process.env.GEMINI_API_KEY;
+  const openAIKey = process.env.OPENAI_API_KEY;
+  const apiKey = geminiKey || openAIKey;
+
+  if (!apiKey) {
+    return NextResponse.json({ ideas: samples, source: "sample" });
+  }
+
+  const isGemini = Boolean(geminiKey);
+  const defaultBase = isGemini
+    ? "https://generativelanguage.googleapis.com/v1beta/openai"
+    : "https://api.openai.com/v1";
+  const base = (process.env.AI_BASE_URL || defaultBase).replace(/\/$/, "");
+  const defaultModel = isGemini ? "gemini-2.5-flash" : "gpt-4o-mini";
+
+  try {
+    const response = await fetch(base + "/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + apiKey,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: process.env.AI_MODEL || defaultModel,
+        temperature: 0.8,
+        response_format: { type: "json_object" },
+        messages: [
+          {
+            role: "system",
+            content:
+              "You are a pragmatic product strategist. Generate exactly 5 distinct, testable micro-SaaS or digital product hypotheses. Never claim demand is proven. Return valid JSON with an ideas array. Each idea must have title, description, targetAudience, whyNow (specific to 2026), difficulty (Easy, Medium, or Hard), monetization, and category.",
+          },
+          {
+            role: "user",
+            content:
+              "Builder goals: " +
+              (goals || "Find a feasible product idea") +
+              "\nSkills: " +
+              (skills || "Not specified") +
+              "\nInterests: " +
+              (interests || "Not specified") +
+              "\nPrefer focused MVPs, clear audiences, and testable problems. Avoid generic AI wrappers.",
+          },
+        ],
+      }),
+      signal: AbortSignal.timeout(25000),
+    });
+
+    if (!response.ok) {
+      return NextResponse.json(
+        { error: "AI provider failed. Check your API key, model, and provider settings." },
+        { status: 502 },
+      );
+    }
+
+    const data = await response.json();
+    const parsed = JSON.parse(data.choices?.[0]?.message?.content || "{}");
+
+    if (!Array.isArray(parsed.ideas) || !parsed.ideas.length) {
+      throw new Error("Invalid payload");
+    }
+
+    const ideas = parsed.ideas.slice(0, 5).map((idea: Record<string, unknown>) => ({
+      title: String(idea.title || "Untitled").slice(0, 100),
+      description: String(idea.description || "").slice(0, 500),
+      targetAudience: String(idea.targetAudience || "").slice(0, 250),
+      whyNow: String(idea.whyNow || "").slice(0, 400),
+      difficulty: ["Easy", "Medium", "Hard"].includes(String(idea.difficulty))
+        ? idea.difficulty
+        : "Medium",
+      monetization: String(idea.monetization || "").slice(0, 200),
+      category: String(idea.category || "Micro-SaaS").slice(0, 80),
+    }));
+
+    return NextResponse.json({ ideas, source: "ai" });
+  } catch {
+    return NextResponse.json(
+      { error: "AI response could not be processed. Please try again." },
+      { status: 502 },
+    );
+  }
+}
