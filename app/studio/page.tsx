@@ -180,7 +180,7 @@ export default function StudioPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[rgb(var(--background))] text-[rgb(var(--foreground))]">
+    <main className="studio-shell min-h-screen bg-[rgb(var(--background))] text-[rgb(var(--foreground))]">
       <header className="sticky top-0 z-20 border-b border-[rgb(var(--border))] bg-[rgb(var(--background))]/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
           <Link href="/dashboard" className="inline-flex items-center gap-2 text-sm font-medium muted hover:text-violet-600"><ArrowLeft size={16}/> Back to dashboard</Link>
