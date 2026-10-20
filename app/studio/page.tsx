@@ -2,10 +2,13 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Check, Eye, LoaderCircle, Sparkles, WandSparkles } from "lucide-react";
+import { ArrowLeft, Check, Eye, GripVertical, LoaderCircle, Sparkles, WandSparkles } from "lucide-react";
 
 type Theme = "violet" | "ocean" | "ember";
 type Layout = "editorial" | "minimal" | "bold";
+type SectionKey = "hero" | "problem" | "approach" | "benefits" | "howItWorks" | "cta";
+const defaultSectionOrder: SectionKey[] = ["hero", "problem", "approach", "benefits", "howItWorks", "cta"];
+const sectionLabels: Record<SectionKey, string> = { hero: "Hero", problem: "Challenge", approach: "Approach", benefits: "Why It Matters", howItWorks: "How It Starts", cta: "Final CTA" };
 
 const themes: Record<Theme, { label: string; accent: string; soft: string; ink: string; description: string }> = {
   violet: { label: "Violet studio", accent: "#7157e8", soft: "#f1edff", ink: "#211b35", description: "Polished, modern, product-led" },
@@ -14,16 +17,50 @@ const themes: Record<Theme, { label: string; accent: string; soft: string; ink: 
 };
 
 export default function StudioPage() {
+  const [pageId, setPageId] = useState("");
+  const [sectionOrder, setSectionOrder] = useState<SectionKey[]>(defaultSectionOrder);
+  const [draggingSection, setDraggingSection] = useState<SectionKey | null>(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [audience, setAudience] = useState("");
   const [category, setCategory] = useState("Micro-SaaS");
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
+    const existingId = params.get("pageId");
     setTitle(params.get("title") || "");
     setDescription(params.get("description") || "");
     setAudience(params.get("audience") || "");
     setCategory(params.get("category") || "Micro-SaaS");
+    if (!existingId) return;
+    setPageId(existingId);
+    let cancelled = false;
+    (async () => {
+      try {
+        const response = await fetch("/api/landing-pages/" + encodeURIComponent(existingId));
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "Could not load this page.");
+        if (cancelled) return;
+        const page = data.page, content = page.content || {}, idea = page.idea_data || {};
+        const sections = Array.isArray(content.sections) ? content.sections : [];
+        setTitle(page.title || idea.title || ""); setDescription(idea.description || content.subheadline || "");
+        setAudience(idea.targetAudience || content.audience || ""); setCategory(idea.category || "Micro-SaaS");
+        setHeadline(content.headline || page.headline || ""); setSubheadline(content.subheadline || "");
+        setProblem(content.problem || ""); setSolution(content.solution || "");
+        setChallengeTitle(sections.find((item: {type?: string}) => item.type === "problem")?.title || "The current way takes too much effort.");
+        setApproachTitle(sections.find((item: {type?: string}) => item.type === "benefits")?.title || "Less friction. More forward.");
+        setBenefitsTitle(content.benefitsTitle || "A more focused way to move forward.");
+        setHowTitle(content.howTitle || sections.find((item: {type?: string}) => item.type === "howItWorks")?.title || "Small first step. Real feedback.");
+        setHowStepsText((content.howSteps || sections.find((item: {type?: string}) => item.type === "howItWorks")?.items || []).join("\n"));
+        setBenefitsText((content.benefits || []).join("\n"));
+        setCtaTitle(content.ctaTitle || sections.find((item: {type?: string}) => item.type === "cta")?.title || "Help shape what comes next.");
+        setCtaBody(content.ctaBody || sections.find((item: {type?: string}) => item.type === "cta")?.body || "Join the list and get updates when there’s something worth trying.");
+        setTheme(["violet","ocean","ember"].includes(content.theme) ? content.theme : "violet");
+        setLayout(["editorial","minimal","bold"].includes(content.layout) ? content.layout : "minimal");
+        setSectionOrder(Array.isArray(content.sectionOrder) ? content.sectionOrder.filter((key: string) => defaultSectionOrder.includes(key)) : defaultSectionOrder);
+        setPublished("/p/" + page.slug);
+      } catch (caught) { if (!cancelled) setError(caught instanceof Error ? caught.message : "Could not load this page."); }
+    })();
+    return () => { cancelled = true; };
   }, []);
   const [headline, setHeadline] = useState("");
   const [subheadline, setSubheadline] = useState("");
@@ -33,6 +70,8 @@ export default function StudioPage() {
   const [approachTitle, setApproachTitle] = useState("Less friction. More forward.");
   const [benefitsTitle, setBenefitsTitle] = useState("A more focused way to move forward.");
   const [howTitle, setHowTitle] = useState("Small first step. Real feedback.");
+  const [ctaTitle, setCtaTitle] = useState("Help shape what comes next.");
+  const [ctaBody, setCtaBody] = useState("Join the list and get updates when there’s something worth trying.");
   const [howStepsText, setHowStepsText] = useState("Join the early-access list\nShare the workflow you want to improve\nGet updates as the concept evolves");
   const [benefitsText, setBenefitsText] = useState("Save time on repetitive work\nKeep the important work in one place\nMake progress with less friction");
   const [theme, setTheme] = useState<Theme>("violet");
@@ -56,9 +95,12 @@ export default function StudioPage() {
       approachTitle: approachTitle.trim() || "Less friction. More forward.",
       benefitsTitle: benefitsTitle.trim() || "A more focused way to move forward.",
       howTitle: howTitle.trim() || "Small first step. Real feedback.",
+      ctaTitle: ctaTitle.trim() || "Help shape what comes next.",
+      ctaBody: ctaBody.trim() || "Join the list and get updates when there’s something worth trying.",
+      sectionOrder,
       howSteps: howStepsText.split("\n").map((item) => item.trim()).filter(Boolean).slice(0, 6),
     };
-  }, [title, description, audience, headline, subheadline, problem, solution, benefitsText, challengeTitle, approachTitle, benefitsTitle, howTitle, howStepsText]);
+  }, [title, description, audience, headline, subheadline, problem, solution, benefitsText, challengeTitle, approachTitle, benefitsTitle, howTitle, howStepsText, ctaTitle, ctaBody, sectionOrder]);
 
   async function publishPage(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -70,6 +112,7 @@ export default function StudioPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          pageId: pageId || undefined,
           idea: {
             title: title.trim(),
             description: description.trim(),
@@ -138,6 +181,7 @@ export default function StudioPage() {
               <div><label htmlFor="approachTitle" className="text-sm font-medium">Approach card heading</label><input id="approachTitle" maxLength={180} value={approachTitle} onChange={(e) => setApproachTitle(e.target.value)} className="mt-2 w-full rounded-xl border border-[rgb(var(--border))] bg-transparent px-4 py-3 text-sm outline-none focus:border-violet-500"/></div>
               <div><label htmlFor="benefitsTitle" className="text-sm font-medium">Why it matters heading</label><input id="benefitsTitle" maxLength={180} value={benefitsTitle} onChange={(e) => setBenefitsTitle(e.target.value)} className="mt-2 w-full rounded-xl border border-[rgb(var(--border))] bg-transparent px-4 py-3 text-sm outline-none focus:border-violet-500"/></div>
               <div className="border-t border-[rgb(var(--border))] pt-5"><div className="text-xs font-semibold text-violet-600">04 / HOW IT STARTS</div><h3 className="mt-2 text-base font-semibold">Edit the first steps</h3><label htmlFor="howTitle" className="mt-4 block text-sm font-medium">Section heading</label><input id="howTitle" maxLength={180} value={howTitle} onChange={(e) => setHowTitle(e.target.value)} className="mt-2 w-full rounded-xl border border-[rgb(var(--border))] bg-transparent px-4 py-3 text-sm outline-none focus:border-violet-500"/><label htmlFor="howSteps" className="mt-4 block text-sm font-medium">Steps <span className="font-normal muted">(one per line, up to 6)</span></label><textarea id="howSteps" rows={4} value={howStepsText} onChange={(e) => setHowStepsText(e.target.value)} className="mt-2 w-full resize-y rounded-xl border border-[rgb(var(--border))] bg-transparent px-4 py-3 text-sm leading-6 outline-none focus:border-violet-500"/></div>
+              <div className="border-t border-[rgb(var(--border))] pt-5"><div className="text-xs font-semibold text-violet-600">05 / FINAL CTA</div><h3 className="mt-2 text-base font-semibold">Edit the closing invitation</h3><label htmlFor="ctaTitle" className="mt-4 block text-sm font-medium">Final CTA heading</label><input id="ctaTitle" maxLength={180} value={ctaTitle} onChange={(e) => setCtaTitle(e.target.value)} className="mt-2 w-full rounded-xl border border-[rgb(var(--border))] bg-transparent px-4 py-3 text-sm outline-none focus:border-violet-500"/><label htmlFor="ctaBody" className="mt-4 block text-sm font-medium">Final CTA description</label><textarea id="ctaBody" maxLength={500} rows={2} value={ctaBody} onChange={(e) => setCtaBody(e.target.value)} className="mt-2 w-full resize-y rounded-xl border border-[rgb(var(--border))] bg-transparent px-4 py-3 text-sm leading-6 outline-none focus:border-violet-500"/></div>
             </section>
 
             <button type="submit" disabled={busy || !title.trim() || !description.trim()} className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-violet-600 px-5 py-4 text-sm font-semibold text-white shadow-lg shadow-violet-600/20 disabled:cursor-not-allowed disabled:opacity-60">{busy ? <LoaderCircle size={17} className="animate-spin"/> : <Sparkles size={17}/>} {busy ? "Publishing your page…" : "Publish landing page"}</button>
