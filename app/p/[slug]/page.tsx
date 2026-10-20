@@ -85,13 +85,13 @@ export default async function PublicPage({ params }: Props) {
       </section>
 
       <section id="details" className="mx-auto flex max-w-7xl flex-col px-6 pb-24 sm:px-10 sm:pb-32">
-        <div className="grid gap-5 md:grid-cols-2" style={{ order: Math.min(sectionPosition("problem"), sectionPosition("approach")) }}>
-          <article className="rounded-[2rem] border border-black/[.07] bg-white p-7 sm:p-10">
+        <div className="contents">
+          <article className="mt-5 rounded-[2rem] border border-black/[.07] bg-white p-7 sm:p-10" style={{ order: sectionPosition("problem") }}>
             <div className="text-[10px] font-semibold uppercase tracking-[.2em] text-[#9691a6]">THE CHALLENGE</div>
             <h2 className="mt-5 max-w-md text-3xl font-semibold leading-tight tracking-[-.045em] sm:text-4xl">{challengeSection?.title || "The current way takes too much effort."}</h2>
             <p className="mt-5 text-sm leading-7 text-[#777287]">{problem}</p>
           </article>
-          <article className="relative overflow-hidden rounded-[2rem] p-7 sm:p-10" style={{ background: theme.soft }}>
+          <article className="relative mt-5 overflow-hidden rounded-[2rem] p-7 sm:p-10" style={{ order: sectionPosition("approach"), background: theme.soft }}>
             <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full blur-3xl" style={{ background: theme.glow }}/>
             <div className="relative text-[10px] font-semibold uppercase tracking-[.2em]" style={{ color: theme.accent }}>THE APPROACH</div>
             <h2 className="relative mt-5 max-w-md text-3xl font-semibold leading-tight tracking-[-.045em] sm:text-4xl">{approachSection?.title || "Less friction. More forward."}</h2>
