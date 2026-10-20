@@ -44,7 +44,7 @@ function starter(project: Project): AppBuilder {
     ],
   };
 }
-const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c] || c));
+const esc = (s: string) => { const entities: Record<string, string> = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }; return s.replace(/[&<>"]/g, (c) => entities[c] || c); };
 const themeClass: Record<AppBuilder["theme"], string> = {
   violet: "from-violet-600 to-indigo-600", ocean: "from-cyan-600 to-blue-700", ember: "from-orange-500 to-rose-600",
 };
