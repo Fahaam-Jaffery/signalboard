@@ -5,9 +5,9 @@ import Link from "next/link";
 import { ArrowRight, ArrowUpRight, Check, CircleDot, Compass, Layers3, Sparkles, TrendingUp, Users, Zap } from "lucide-react";
 
 const views = [
-  { id: "discover", label: "Discover", eyebrow: "IDEA SIGNAL", title: "QuietHours", category: "Creator tools", desc: "A calmer way for independent creators to protect deep-work time.", score: "Strong problem fit", fit: 82, icon: Compass, stat: "82", statLabel: "signal score" },
-  { id: "validate", label: "Validate", eyebrow: "TEST YOUR ANGLE", title: "A page with a purpose", category: "Waitlist experiment", desc: "Explain the promise clearly and give the right people one useful next step.", score: "Ready to test", fit: 68, icon: Layers3, stat: "68%", statLabel: "example interest" },
-  { id: "learn", label: "Learn", eyebrow: "REAL-WORLD FEEDBACK", title: "Attention you can learn from", category: "Early signal", desc: "Bring signups and audience feedback together before you commit to the full build.", score: "Signal collected", fit: 91, icon: TrendingUp, stat: "12", statLabel: "sample signups" },
+  { id: "discover", label: "Discover", eyebrow: "IDEA SIGNAL", title: "QuietHours", category: "Creator tools", desc: "A calmer way for independent creators to protect deep-work time.", score: "Example only", fit: 82, icon: Compass, stat: "82", statLabel: "illustrative fit score" },
+  { id: "validate", label: "Validate", eyebrow: "TEST YOUR ANGLE", title: "A page with a purpose", category: "Waitlist experiment", desc: "Explain the promise clearly and give the right people one useful next step.", score: "Hypothesis", fit: 68, icon: Layers3, stat: "68%", statLabel: "example test metric" },
+  { id: "learn", label: "Learn", eyebrow: "REAL-WORLD FEEDBACK", title: "Signals you can learn from", category: "Early signal", desc: "Bring signups and audience feedback together before you commit to the full build.", score: "Illustrative", fit: 91, icon: TrendingUp, stat: "12", statLabel: "sample signups · demo" },
 ] as const;
 
 export function LandingDemo() {
@@ -16,8 +16,8 @@ export function LandingDemo() {
   const Icon = view.icon;
   return <div className="landing-demo relative overflow-hidden rounded-[25px]">
     <div className="demo-topbar flex items-center justify-between border-b px-5 py-4 sm:px-6">
-      <div className="flex items-center gap-3"><span className="demo-brand-mark grid h-9 w-9 place-items-center rounded-xl"><CircleDot size={18}/></span><div><div className="text-xs font-semibold text-white/90">SignalBoard workspace</div><div className="mt-1 text-[10px] text-white/35">Your product discovery desk</div></div></div>
-      <div className="demo-live inline-flex items-center gap-2 rounded-full px-2.5 py-1.5 text-[9px] font-semibold uppercase tracking-[.12em]"><span/> Interactive preview</div>
+      <div className="flex items-center gap-3"><span className="demo-brand-mark grid h-9 w-9 place-items-center rounded-xl"><CircleDot size={18}/></span><div><div className="text-xs font-semibold text-white/90">SignalBoard workspace</div><div className="mt-1 text-[10px] text-white/35">Illustrative workflow · sample data</div></div></div>
+      <div className="demo-live inline-flex items-center gap-2 rounded-full px-2.5 py-1.5 text-[9px] font-semibold uppercase tracking-[.12em]"><span/> Sample preview</div>
     </div>
     <div className="p-4 sm:p-6">
       <div className="demo-tabs grid grid-cols-3 gap-1 rounded-xl p-1" role="tablist" aria-label="Preview workflow">
@@ -35,7 +35,7 @@ export function LandingDemo() {
           <div className="demo-mini-card rounded-xl p-3"><div className="flex items-center gap-2 text-[10px] text-white/40"><Users size={12}/> Audience</div><div className="mt-2 text-xs font-semibold text-white/80">{active === 0 ? "Solo creators" : active === 1 ? "Early adopters" : "Real visitors"}</div></div>
         </div>
       </div>
-      <div className="mt-4 flex items-center justify-between gap-4"><div className="flex items-center gap-2 text-[10px] text-white/35"><Zap size={13} className="text-white/60"/> A focused loop, not another dashboard maze</div><Link href="/signup" className="demo-cta inline-flex shrink-0 items-center gap-1.5 text-xs font-semibold">Try it <ArrowRight size={13}/></Link></div>
+      <div className="mt-4 flex items-center justify-between gap-4"><div className="flex items-center gap-2 text-[10px] text-white/35"><Zap size={13} className="text-white/60"/> Illustrative UI · not live customer data</div><Link href="/signup" className="demo-cta inline-flex shrink-0 items-center gap-1.5 text-xs font-semibold">Try it <ArrowRight size={13}/></Link></div>
     </div>
   </div>;
 }
