@@ -148,14 +148,16 @@ export default function StudioPage() {
         try {
           const projectResponse = await fetch("/api/projects/" + encodeURIComponent(projectId));
           const projectData = await projectResponse.json();
-          if (projectResponse.ok && projectData.project) {
-            const project = projectData.project;
-            await fetch("/api/projects/" + encodeURIComponent(projectId), {
-              method: "PATCH", headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ name: project.name, description: project.description, audience: project.audience, category: project.category, stage: "launch", workspace: { ...(project.workspace || {}), landingPageId: data.page.id } }),
-            });
-          }
-        } catch { /* Publishing succeeded; linking can be retried from the project workspace. */ }
+          if (!projectResponse.ok || !projectData.project) throw new Error("Could not load the product workspace to link this page.");
+          const project = projectData.project;
+          const linkResponse = await fetch("/api/projects/" + encodeURIComponent(projectId), {
+            method: "PATCH", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: project.name, description: project.description, audience: project.audience, category: project.category, stage: "launch", workspace: { ...(project.workspace || {}), landingPageId: data.page.id } }),
+          });
+          if (!linkResponse.ok) throw new Error("Could not link the published page to this product workspace.");
+        } catch (linkError) {
+          setError(linkError instanceof Error ? linkError.message : "Page published, but the product workspace link could not be saved.");
+        }
       }
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Could not publish the landing page.");
