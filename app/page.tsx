@@ -1,8 +1,92 @@
-import Link from "next/link";import {ArrowRight,ArrowUpRight,Check,CircleDot,Compass,Layers3,Sparkles,Target,TrendingUp,Zap} from "lucide-react";
-const examples=[{title:"QuietHours",tag:"Creator tools",desc:"A tiny focus planner that helps independent creators protect deep-work time.",score:"Worth exploring"},{title:"ClientCurrent",tag:"Freelance ops",desc:"Turn scattered client updates into a calm, one-page project pulse.",score:"Emerging"},{title:"TinyTender",tag:"Micro-SaaS",desc:"Track small, high-fit opportunities before they become crowded.",score:"Promising angle"}];
-export default function Home(){return <main className="overflow-hidden"><nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6 lg:px-10"><Link href="/" className="flex items-center gap-2.5 font-semibold tracking-tight"><span className="grid h-9 w-9 place-items-center rounded-xl bg-violet-600 text-white"><CircleDot size={19}/></span><span className="text-lg">signalboard<span className="text-violet-500">.</span></span></Link><div className="hidden gap-8 text-sm muted md:flex"><a href="#how">How it works</a><a href="#why">Why SignalBoard</a></div><div className="flex items-center gap-3"><Link href="/login" className="hidden rounded-full px-4 py-2.5 text-sm sm:inline-flex">Log in</Link><Link href="/signup" className="inline-flex items-center gap-2 rounded-full bg-[rgb(var(--foreground))] px-5 py-2.5 text-sm font-semibold text-[rgb(var(--background))]">Start exploring <ArrowUpRight size={15}/></Link></div></nav>
-<section className="relative mx-auto grid max-w-7xl items-center gap-14 px-6 pb-24 pt-14 lg:grid-cols-[1.02fr_.98fr] lg:px-10 lg:pb-32 lg:pt-20"><div className="pointer-events-none absolute -left-48 top-0 h-[500px] w-[500px] rounded-full bg-violet-500/10 blur-[120px]"/><div className="relative z-[1]"><div className="mb-7 inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/[.07] px-3.5 py-2 text-xs font-semibold text-violet-600 dark:text-violet-300"><Sparkles size={14}/> YOUR NEXT GOOD IDEA STARTS HERE</div><h1 className="max-w-2xl text-5xl font-semibold leading-[1.05] tracking-[-.055em] sm:text-6xl lg:text-[76px]">Find the idea.<br/><span className="bg-gradient-to-r from-violet-500 via-fuchsia-500 to-indigo-500 bg-clip-text text-transparent">Find the signal.</span></h1><p className="mt-7 max-w-xl text-lg leading-8 muted">Less guessing, more building. Discover product ideas shaped around your strengths, launch a page in minutes, and see if people want what you’re making.</p><div className="mt-9 flex flex-col gap-3 sm:flex-row"><Link href="/signup" className="inline-flex items-center justify-center gap-2 rounded-full bg-violet-600 px-6 py-3.5 text-sm font-semibold text-white shadow-glow">Build your signal <ArrowRight size={16}/></Link><a href="#how" className="inline-flex items-center justify-center gap-2 rounded-full border border-[rgb(var(--border))] px-6 py-3.5 text-sm font-semibold">See how it works</a></div><div className="mt-10 flex items-center gap-3 text-xs muted"><span className="flex -space-x-2"><span className="grid h-7 w-7 place-items-center rounded-full border-2 border-[rgb(var(--background))] bg-violet-200 font-bold text-violet-800">A</span><span className="grid h-7 w-7 place-items-center rounded-full border-2 border-[rgb(var(--background))] bg-amber-200 font-bold text-amber-800">J</span><span className="grid h-7 w-7 place-items-center rounded-full border-2 border-[rgb(var(--background))] bg-emerald-200 font-bold text-emerald-800">M</span></span> Built for curious minds and practical builders</div></div>
-<div className="relative mx-auto w-full max-w-[570px] lg:ml-auto"><div className="absolute -inset-8 rounded-[40px] bg-gradient-to-br from-violet-500/15 via-fuchsia-500/10 to-blue-500/10 blur-2xl"/><div className="relative overflow-hidden rounded-[26px] border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-4 shadow-2xl sm:p-6"><div className="flex items-center justify-between border-b border-[rgb(var(--border))] pb-5"><div><div className="text-sm font-semibold">Your signal feed</div><div className="mt-1 text-xs muted">A few directions worth exploring</div></div><div className="flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1.5 text-[10px] font-semibold text-emerald-600"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500"/> LIVE PREVIEW</div></div><div className="mt-4 space-y-3">{examples.map((idea,i)=><article key={idea.title} className="group rounded-2xl border border-[rgb(var(--border))] p-4 transition hover:border-violet-500/40"><div className="flex items-start gap-3"><div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-violet-500/10 text-sm font-bold text-violet-600">0{i+1}</div><div className="flex-1"><div className="flex flex-wrap items-center gap-2"><h3 className="font-semibold">{idea.title}</h3><span className="rounded-full bg-[rgb(var(--muted))] px-2 py-1 text-[10px] muted">{idea.tag}</span></div><p className="mt-1.5 text-xs leading-5 muted">{idea.desc}</p><div className="mt-3 flex items-center gap-2 text-[10px] font-medium text-emerald-600"><TrendingUp size={12}/>{idea.score}</div></div><ArrowUpRight size={15} className="muted"/></div></article>)}</div><div className="mt-4 flex items-center gap-3 rounded-2xl bg-[rgb(var(--muted))] p-4"><div className="grid h-9 w-9 place-items-center rounded-xl bg-violet-600 text-white"><Zap size={17}/></div><div><div className="text-xs font-semibold">Ready to find your angle?</div><div className="mt-0.5 text-[10px] muted">Personalized to what you bring</div></div></div></div><div className="absolute -right-4 top-16 hidden rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-3 shadow-xl sm:block"><div className="flex items-center gap-2 text-xs font-semibold"><Target size={16} className="text-violet-600"/> Test before you build</div></div></div></section>
-<section id="why" className="border-y border-[rgb(var(--border))] bg-[rgb(var(--muted))]/50"><div className="mx-auto grid max-w-7xl gap-7 px-6 py-8 sm:grid-cols-3 lg:px-10">{[{icon:Compass,title:"Start with your strengths",desc:"Ideas grounded in your skills, interests, and goals."},{icon:Layers3,title:"Make it tangible",desc:"Turn a concept into a polished public landing page."},{icon:TrendingUp,title:"Look for real demand",desc:"Collect waitlist signups and learn from actual interest."}].map(item=><div key={item.title} className="flex items-start gap-3"><div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] text-violet-600"><item.icon size={18}/></div><div><h3 className="text-sm font-semibold">{item.title}</h3><p className="mt-1 text-sm leading-6 muted">{item.desc}</p></div></div>)}</div></section>
-<section id="how" className="mx-auto max-w-7xl px-6 py-24 lg:px-10 lg:py-32"><div className="eyebrow text-violet-600">A small loop with big potential</div><h2 className="mt-4 text-3xl font-semibold tracking-[-.04em] sm:text-5xl">From “what if?” to<br/>something worth testing.</h2><p className="mt-5 max-w-2xl text-base leading-7 muted">You don’t need a 40-page business plan. You need a clear problem, a promising angle, and a way to learn from the people you want to serve.</p><div className="mt-12 grid gap-4 md:grid-cols-3">{[{n:"01",title:"Discover",desc:"Tell SignalBoard what you’re good at and what you want to build. Get five tailored directions to explore.",tag:"Your context"},{n:"02",title:"Publish",desc:"Give your strongest idea a name, a clear promise, and a waitlist page you can share with the world.",tag:"Your experiment"},{n:"03",title:"Learn",desc:"Track signups and see which ideas earn attention before investing weeks in the wrong thing.",tag:"Your signal"}].map(item=><article key={item.n} className="surface p-6 transition hover:-translate-y-1 hover:shadow-xl sm:p-8"><div className="flex items-center justify-between"><span className="text-sm font-semibold text-violet-600">{item.n}</span><span className="rounded-full bg-[rgb(var(--muted))] px-3 py-1.5 text-[10px] muted">{item.tag}</span></div><h3 className="mt-10 text-2xl font-semibold">{item.title}</h3><p className="mt-3 text-sm leading-6 muted">{item.desc}</p><div className="mt-7 flex items-center gap-2 text-xs font-semibold text-violet-600">Explore the workflow <ArrowRight size={13}/></div></article>)}</div></section>
-<section className="px-6 pb-24 lg:px-10"><div className="relative mx-auto max-w-7xl overflow-hidden rounded-[30px] bg-[#171522] px-7 py-12 text-white sm:px-12 sm:py-16"><div className="absolute -right-16 -top-32 h-80 w-80 rounded-full bg-violet-600/30 blur-[90px]"/><div className="relative flex flex-col justify-between gap-8 md:flex-row md:items-end"><div className="max-w-xl"><div className="eyebrow text-violet-300">YOUR NEXT MOVE</div><h2 className="mt-4 text-3xl font-semibold sm:text-5xl">You bring the curiosity.<br/>We’ll help find the signal.</h2><p className="mt-4 text-sm leading-6 text-white/60">Start with what you know. Test what you imagine. Build what people need.</p></div><Link href="/signup" className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3.5 text-sm font-semibold text-[#171522]">Get started for free <ArrowRight size={16}/></Link></div></div></section><footer className="mx-auto flex max-w-7xl flex-col gap-4 border-t border-[rgb(var(--border))] px-6 py-7 text-xs muted sm:flex-row sm:items-center sm:justify-between lg:px-10"><Link href="/" className="flex items-center gap-2 font-semibold text-[rgb(var(--foreground))]"><CircleDot size={16} className="text-violet-600"/> signalboard.</Link><span>Build with curiosity. Validate with evidence.</span><div className="flex gap-5"><Link href="/login">Log in</Link><Link href="/signup">Create account</Link></div></footer></main>}
+import Link from "next/link";
+import { ArrowDownRight, ArrowRight, ArrowUpRight, Check, CircleDot, Compass, Layers3, ShieldCheck, Sparkles, Target, TrendingUp, Zap } from "lucide-react";
+import { LandingDemo } from "@/components/landing-demo";
+
+const pillars = [
+  { n: "01", icon: Compass, title: "Find a sharper idea", desc: "Start with your skills, interests, and constraints—not another generic list of startup ideas.", tag: "Discover" },
+  { n: "02", icon: Layers3, title: "Make the idea tangible", desc: "Shape a clear promise into a polished landing page people can actually respond to.", tag: "Validate" },
+  { n: "03", icon: TrendingUp, title: "Follow the evidence", desc: "Collect waitlist interest and use real signals to decide what deserves your time.", tag: "Learn" },
+];
+
+export default function Home() {
+  return <main className="cinematic-home overflow-hidden">
+    <nav className="cinematic-nav mx-auto flex max-w-7xl items-center justify-between px-6 py-5 lg:px-10">
+      <Link href="/" className="brand-lockup flex items-center gap-3 font-semibold tracking-tight">
+        <span className="brand-mark grid h-9 w-9 place-items-center rounded-xl"><CircleDot size={19}/></span>
+        <span className="text-[15px]">signalboard<span className="brand-period">.</span></span>
+      </Link>
+      <div className="hidden items-center gap-8 text-sm text-white/55 md:flex">
+        <a className="nav-link" href="#workflow">How it works</a>
+        <a className="nav-link" href="#principles">Why SignalBoard</a>
+      </div>
+      <div className="flex items-center gap-3">
+        <Link href="/login" className="rounded-full px-4 py-2.5 text-sm text-white/70 transition hover:text-white">Log in</Link>
+        <Link href="/signup" className="cinematic-button cinematic-button-primary inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold sm:px-5">Start exploring <ArrowUpRight size={15}/></Link>
+      </div>
+    </nav>
+
+    <section className="cinematic-hero relative mx-auto grid max-w-7xl items-center gap-14 px-6 pb-24 pt-14 lg:grid-cols-[.94fr_1.06fr] lg:px-10 lg:pb-32 lg:pt-20">
+      <div className="hero-orb hero-orb-one pointer-events-none absolute -left-56 top-0 h-[520px] w-[520px] rounded-full"/>
+      <div className="hero-orb hero-orb-two pointer-events-none absolute right-[22%] top-12 h-[360px] w-[360px] rounded-full"/>
+      <div className="hero-copy relative z-10">
+        <div className="hero-kicker mb-7 inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-[10px] font-semibold uppercase tracking-[.16em]"><span className="status-pip"/><Sparkles size={13}/> A clearer path from idea to evidence</div>
+        <h1 className="hero-heading max-w-2xl text-5xl font-semibold leading-[1.02] tracking-[-.065em] sm:text-6xl lg:text-[76px]">Make your next<br/>move <span className="luminous-type">mean something.</span></h1>
+        <p className="mt-7 max-w-xl text-base leading-7 text-white/55 sm:text-lg sm:leading-8">Discover a promising product idea, turn it into a page, and learn whether people care—before you spend weeks building in the dark.</p>
+        <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+          <Link href="/signup" className="cinematic-button cinematic-button-primary inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold">Find your signal <ArrowRight size={16}/></Link>
+          <a href="#workflow" className="cinematic-button cinematic-button-secondary inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold">Explore the workflow <ArrowDownRight size={15}/></a>
+        </div>
+        <div className="mt-10 flex flex-wrap items-center gap-x-5 gap-y-3 text-xs text-white/45">
+          <span className="inline-flex items-center gap-2"><ShieldCheck size={14} className="text-white/70"/> Built for small, smart experiments</span><span className="hidden h-1 w-1 rounded-full bg-white/25 sm:block"/><span>Clarity over guesswork</span>
+        </div>
+      </div>
+      <div className="relative z-10 mx-auto w-full max-w-[650px] lg:ml-auto">
+        <div className="demo-halo absolute -inset-8 rounded-[40px]"/>
+        <LandingDemo/>
+        <div className="floating-note floating-note-top hidden sm:flex"><span className="floating-note-icon"><Target size={15}/></span><span><b>Signal over noise</b><small>Focus on what matters</small></span></div>
+        <div className="floating-note floating-note-bottom hidden sm:flex"><span className="floating-note-icon success"><Check size={15}/></span><span><b>Tested in the real world</b><small>Learn before you scale</small></span></div>
+      </div>
+    </section>
+
+    <section id="principles" className="principles-band border-y border-white/[.08]">
+      <div className="mx-auto grid max-w-7xl gap-6 px-6 py-8 sm:grid-cols-3 lg:px-10">
+        {pillars.map((item) => <article key={item.n} className="principle-item group flex items-start gap-4 rounded-2xl p-3">
+          <div className="principle-icon grid h-11 w-11 shrink-0 place-items-center rounded-xl"><item.icon size={18}/></div>
+          <div><div className="mb-1 text-[10px] font-semibold uppercase tracking-[.17em] text-white/35">{item.tag}</div><h2 className="text-sm font-semibold text-white/90">{item.title}</h2><p className="mt-1.5 max-w-xs text-xs leading-5 text-white/45">{item.desc}</p></div>
+        </article>)}
+      </div>
+    </section>
+
+    <section id="workflow" className="workflow-section mx-auto max-w-7xl px-6 py-24 lg:px-10 lg:py-32">
+      <div className="section-label"><span/> THE SIGNAL LOOP</div>
+      <div className="mt-5 grid gap-8 md:grid-cols-[.9fr_1.1fr] md:items-end">
+        <h2 className="section-heading max-w-2xl text-3xl font-semibold tracking-[-.055em] sm:text-5xl">Less theatre.<br/><span className="text-white/40">More useful proof.</span></h2>
+        <p className="max-w-xl text-sm leading-7 text-white/50 md:justify-self-end md:text-base">You don’t need a forty-page business plan to begin. You need a focused hypothesis, a simple way to explain it, and a feedback loop that keeps you honest.</p>
+      </div>
+      <div className="mt-12 grid gap-4 md:grid-cols-3">
+        {[
+          {n:"01",title:"Discover",desc:"Map what you know to problems worth exploring. Get tailored starting points with a reason behind each one.",icon:Compass,detail:"Start with your context"},
+          {n:"02",title:"Publish",desc:"Turn the strongest direction into a clear, polished landing page with a real call to action.",icon:Layers3,detail:"Make the idea tangible"},
+          {n:"03",title:"Learn",desc:"Collect interest, review the signal, and decide what to improve before committing to a full build.",icon:TrendingUp,detail:"Let evidence guide you"},
+        ].map((item)=><article key={item.n} className="workflow-card group relative overflow-hidden rounded-2xl p-6 sm:p-7">
+          <div className="workflow-card-glow"/>
+          <div className="relative flex items-center justify-between"><span className="workflow-number">{item.n}</span><item.icon className="workflow-icon" size={19}/></div>
+          <h3 className="relative mt-10 text-xl font-semibold tracking-tight text-white">{item.title}</h3><p className="relative mt-3 min-h-[72px] text-sm leading-6 text-white/48">{item.desc}</p>
+          <div className="relative mt-7 flex items-center gap-2 border-t border-white/[.08] pt-4 text-xs font-medium text-white/65">{item.detail}<ArrowUpRight size={14} className="workflow-arrow ml-auto"/></div>
+        </article>)}
+      </div>
+    </section>
+
+    <section className="px-6 pb-24 lg:px-10">
+      <div className="final-cta relative mx-auto max-w-7xl overflow-hidden rounded-[28px] px-7 py-12 sm:px-12 sm:py-16">
+        <div className="cta-grid absolute inset-0"/>
+        <div className="cta-glow absolute -right-20 -top-44 h-[400px] w-[400px] rounded-full"/>
+        <div className="relative flex flex-col justify-between gap-8 md:flex-row md:items-end">
+          <div className="max-w-2xl"><div className="section-label"><span/> YOUR NEXT MOVE</div><h2 className="mt-5 text-3xl font-semibold leading-tight tracking-[-.05em] text-white sm:text-5xl">You bring the curiosity.<br/><span className="text-white/45">We’ll help find the signal.</span></h2><p className="mt-4 max-w-lg text-sm leading-6 text-white/50">Start with what you know. Test what you imagine. Build what people need.</p></div>
+          <Link href="/signup" className="cinematic-button cinematic-button-light inline-flex shrink-0 items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold">Get started for free <ArrowRight size={16}/></Link>
+        </div>
+      </div>
+    </section>
+    <footer className="cinematic-footer mx-auto flex max-w-7xl flex-col gap-4 border-t border-white/[.08] px-6 py-7 text-xs text-white/40 sm:flex-row sm:items-center sm:justify-between lg:px-10"><Link href="/" className="flex items-center gap-2 font-semibold text-white/75"><CircleDot size={16}/> signalboard<span className="brand-period">.</span></Link><span>Build with curiosity. Validate with evidence.</span><div className="flex gap-5"><Link href="/login">Log in</Link><Link href="/signup">Create account</Link></div></footer>
+  </main>;
+}
