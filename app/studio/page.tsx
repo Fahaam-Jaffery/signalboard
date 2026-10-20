@@ -33,7 +33,7 @@ export default function StudioPage() {
   const [approachTitle, setApproachTitle] = useState("Less friction. More forward.");
   const [benefitsTitle, setBenefitsTitle] = useState("A more focused way to move forward.");
   const [howTitle, setHowTitle] = useState("Small first step. Real feedback.");
-  const [howStepsText, setHowStepsText] = useState("Join the early-access list\\nShare the workflow you want to improve\\nGet updates as the concept evolves");
+  const [howStepsText, setHowStepsText] = useState("Join the early-access list\nShare the workflow you want to improve\nGet updates as the concept evolves");
   const [benefitsText, setBenefitsText] = useState("Save time on repetitive work\nKeep the important work in one place\nMake progress with less friction");
   const [theme, setTheme] = useState<Theme>("violet");
   const [layout, setLayout] = useState<Layout>("minimal");
@@ -56,7 +56,7 @@ export default function StudioPage() {
       approachTitle: approachTitle.trim() || "Less friction. More forward.",
       benefitsTitle: benefitsTitle.trim() || "A more focused way to move forward.",
       howTitle: howTitle.trim() || "Small first step. Real feedback.",
-      howSteps: howStepsText.split("\\n").map((item) => item.trim()).filter(Boolean).slice(0, 6),
+      howSteps: howStepsText.split("\n").map((item) => item.trim()).filter(Boolean).slice(0, 6),
     };
   }, [title, description, audience, headline, subheadline, problem, solution, benefitsText, challengeTitle, approachTitle, benefitsTitle, howTitle, howStepsText]);
 
