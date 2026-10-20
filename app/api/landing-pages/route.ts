@@ -51,8 +51,21 @@ export async function POST(request: Request) {
   }).select("id,slug,title,headline,created_at").single();
 
   if (error) {
-    console.error("Landing page save failed:", error.message);
-    return NextResponse.json({ error: "Could not save the page. Check that the Supabase schema is installed." }, { status: 500 });
+    // Keep the detailed database error in server logs; return a safe, useful hint to the UI.
+    console.error("Landing page save failed:", {
+      code: error.code,
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+    });
+    const schemaRelated = error.code === "42P01" || error.code === "42703" || error.code === "PGRST204" || error.code === "PGRST205";
+    return NextResponse.json({
+      error: schemaRelated
+        ? "The landing_pages table or one of its columns is missing. Run supabase/schema.sql in the connected Supabase project's SQL Editor."
+        : "Supabase could not save this page.",
+      details: process.env.NODE_ENV === "development" ? error.message : undefined,
+      code: process.env.NODE_ENV === "development" ? error.code : undefined,
+    }, { status: 500 });
   }
 
   return NextResponse.json({
