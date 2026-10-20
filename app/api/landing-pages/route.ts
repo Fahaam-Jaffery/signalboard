@@ -115,7 +115,7 @@ export async function POST(request: Request) {
 
   return NextResponse.json({
     page: data,
-    url: (process.env.NEXT_PUBLIC_SITE_URL || new URL(request.url).origin) + "/p/" + slug,
+    url: (process.env.NEXT_PUBLIC_SITE_URL || new URL(request.url).origin) + "/p/" + data!.slug,
     source: "template",
   });
 }
