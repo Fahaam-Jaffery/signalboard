@@ -44,3 +44,5 @@ grant select, insert, update, delete on table public.product_projects to authent
 -- Table privileges required by the owner-scoped RLS policies above.
 grant select, insert, update on table public.landing_pages to authenticated;
 grant select on table public.landing_pages to anon;
+
+grant delete on table public.landing_pages to authenticated;
