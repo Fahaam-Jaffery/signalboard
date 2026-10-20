@@ -14,7 +14,7 @@ export function LandingDemo() {
   const [active, setActive] = useState(0);
   const view = views[active];
   const Icon = view.icon;
-  return <div className="landing-demo relative overflow-hidden rounded-[25px]">
+  return <div className="landing-demo relative mt-5 overflow-hidden rounded-[25px] lg:mt-8">
     <div className="demo-topbar flex items-center justify-between border-b px-5 py-4 sm:px-6">
       <div className="flex items-center gap-3"><span className="demo-brand-mark grid h-9 w-9 place-items-center rounded-xl"><CircleDot size={18}/></span><div><div className="text-xs font-semibold text-white/90">SignalBoard workspace</div><div className="mt-1 text-[10px] text-white/35">Illustrative workflow · sample data</div></div></div>
       <div className="demo-live inline-flex items-center gap-2 rounded-full px-2.5 py-1.5 text-[9px] font-semibold uppercase tracking-[.12em]"><span/> Sample preview</div>
