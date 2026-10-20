@@ -40,3 +40,7 @@ create policy "Users can update own product projects" on public.product_projects
 drop policy if exists "Users can delete own product projects" on public.product_projects;
 create policy "Users can delete own product projects" on public.product_projects for delete to authenticated using ((select auth.uid()) = user_id);
 grant select, insert, update, delete on table public.product_projects to authenticated;
+
+-- Table privileges required by the owner-scoped RLS policies above.
+grant select, insert, update on table public.landing_pages to authenticated;
+grant select on table public.landing_pages to anon;
