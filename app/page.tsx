@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, Activity, BadgeCheck, Blocks, CircleDot, Compass, FlaskConical, Globe2, Layers3, MousePointer2, Rocket, Sparkles, Target, TrendingUp, Users, Zap } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Activity, BadgeCheck, Blocks, CircleDot, Compass, FlaskConical, Globe2, Layers3, MousePointer2, Check, Rocket, Sparkles, Target, TrendingUp, Users, Zap } from "lucide-react";
 
 const ideas = [
   { title: "QuietHours", category: "CREATOR TOOLS", description: "A calmer way to protect deep-work time and make focus a team habit.", signal: "Strong problem clarity", score: "82", tone: "violet" },
