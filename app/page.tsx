@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowDownRight, ArrowRight, ArrowUpRight, CircleDot, Compass, Layers3, ShieldCheck, Sparkles, Target, TrendingUp } from "lucide-react";
+import { ArrowDownRight, ArrowRight, ArrowUpRight, Check, CircleDot, Compass, Layers3, ShieldCheck, Sparkles, Target, TrendingUp } from "lucide-react";
 import { LandingDemo } from "@/components/landing-demo";
 
 const pillars = [
