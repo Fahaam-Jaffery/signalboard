@@ -46,3 +46,6 @@ grant select, insert, update on table public.landing_pages to authenticated;
 grant select on table public.landing_pages to anon;
 
 grant delete on table public.landing_pages to authenticated;
+
+-- Remove unnecessary table-level privileges; row-level security does not protect against TRUNCATE.
+revoke truncate, references, trigger on table public.landing_pages from anon, authenticated;
