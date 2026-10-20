@@ -50,6 +50,10 @@ export default async function PublicPage({ params }: Props) {
   const problem = generated?.problem || String(raw.problem || "The current way takes more time and energy than it should.");
   const solution = generated?.solution || String(raw.solution || subheadline);
   const sections = generated?.sections || [];
+  const challengeSection = sections.find((section) => section.type === "problem");
+  const approachSection = sections.find((section) => section.type === "benefits");
+  const howSection = sections.find((section) => section.type === "howItWorks");
+  const benefitsTitle = String(raw.benefitsTitle || "A more focused way to move forward.");
 
   return (
     <main className="min-h-screen overflow-hidden bg-[#fcfbff]" style={{ color: theme.ink }}>
@@ -80,29 +84,29 @@ export default async function PublicPage({ params }: Props) {
         <div className="grid gap-5 md:grid-cols-2">
           <article className="rounded-[2rem] border border-black/[.07] bg-white p-7 sm:p-10">
             <div className="text-[10px] font-semibold uppercase tracking-[.2em] text-[#9691a6]">THE CHALLENGE</div>
-            <h2 className="mt-5 max-w-md text-3xl font-semibold leading-tight tracking-[-.045em] sm:text-4xl">The current way takes too much effort.</h2>
+            <h2 className="mt-5 max-w-md text-3xl font-semibold leading-tight tracking-[-.045em] sm:text-4xl">{challengeSection?.title || "The current way takes too much effort."}</h2>
             <p className="mt-5 text-sm leading-7 text-[#777287]">{problem}</p>
           </article>
           <article className="relative overflow-hidden rounded-[2rem] p-7 sm:p-10" style={{ background: theme.soft }}>
             <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full blur-3xl" style={{ background: theme.glow }}/>
             <div className="relative text-[10px] font-semibold uppercase tracking-[.2em]" style={{ color: theme.accent }}>THE APPROACH</div>
-            <h2 className="relative mt-5 max-w-md text-3xl font-semibold leading-tight tracking-[-.045em] sm:text-4xl">Less friction. More forward.</h2>
+            <h2 className="relative mt-5 max-w-md text-3xl font-semibold leading-tight tracking-[-.045em] sm:text-4xl">{approachSection?.title || "Less friction. More forward."}</h2>
             <p className="relative mt-5 text-sm leading-7 text-[#686277]">{solution}</p>
           </article>
         </div>
 
         <div className="mt-5 rounded-[2rem] border border-black/[.07] bg-white p-7 sm:p-10">
           <div className="text-[10px] font-semibold uppercase tracking-[.2em]" style={{ color: theme.accent }}>WHY IT MATTERS</div>
-          <h2 className="mt-4 text-3xl font-semibold tracking-[-.045em] sm:text-4xl">A more focused way to move forward.</h2>
+          <h2 className="mt-4 text-3xl font-semibold tracking-[-.045em] sm:text-4xl">{benefitsTitle}</h2>
           <div className="mt-8 grid gap-6 sm:grid-cols-3">
             {benefits.map((benefit, index) => <div key={benefit} className="flex items-start gap-3"><span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl text-xs font-semibold" style={{ background: theme.soft, color: theme.accent }}>0{index + 1}</span><p className="pt-1 text-sm leading-6 text-[#777287]">{benefit}</p></div>)}
           </div>
         </div>
 
-        {sections.some((section) => section.type === "howItWorks") && <div className="mt-5 rounded-[2rem] border border-black/[.07] bg-white p-7 sm:p-10">
+        {howSection && <div className="mt-5 rounded-[2rem] border border-black/[.07] bg-white p-7 sm:p-10">
           <div className="text-[10px] font-semibold uppercase tracking-[.2em]" style={{ color: theme.accent }}>HOW IT STARTS</div>
-          <h2 className="mt-4 text-3xl font-semibold tracking-[-.045em] sm:text-4xl">Small first step. Real feedback.</h2>
-          <div className="mt-8 grid gap-4 sm:grid-cols-3">{(sections.find((section) => section.type === "howItWorks")?.items || []).map((item, index) => <div key={item} className="rounded-2xl p-5" style={{ background: theme.soft }}><div className="text-xs font-semibold" style={{ color: theme.accent }}>STEP 0{index + 1}</div><p className="mt-3 text-sm leading-6">{item}</p></div>)}</div>
+          <h2 className="mt-4 text-3xl font-semibold tracking-[-.045em] sm:text-4xl">{howSection.title || "Small first step. Real feedback."}</h2>
+          <div className="mt-8 grid gap-4 sm:grid-cols-3">{(howSection.items || []).map((item, index) => <div key={item} className="rounded-2xl p-5" style={{ background: theme.soft }}><div className="text-xs font-semibold" style={{ color: theme.accent }}>STEP 0{index + 1}</div><p className="mt-3 text-sm leading-6">{item}</p></div>)}</div>
         </div>}
 
         <div className="mt-5 flex flex-col items-start justify-between gap-6 rounded-[2rem] p-7 sm:flex-row sm:items-center sm:p-10" style={{ background: theme.ink, color: "#fff" }}>
