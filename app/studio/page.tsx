@@ -9,6 +9,11 @@ type Layout = "editorial" | "minimal" | "bold";
 type SectionKey = "hero" | "problem" | "approach" | "benefits" | "howItWorks" | "cta";
 const defaultSectionOrder: SectionKey[] = ["hero", "problem", "approach", "benefits", "howItWorks", "cta"];
 const sectionLabels: Record<SectionKey, string> = { hero: "Hero", problem: "Challenge", approach: "Approach", benefits: "Why It Matters", howItWorks: "How It Starts", cta: "Final CTA" };
+function normalizeSectionOrder(value: unknown): SectionKey[] {
+  const raw = Array.isArray(value) ? value.filter((key): key is SectionKey => typeof key === "string" && defaultSectionOrder.includes(key as SectionKey)) : [];
+  const rest = raw.filter((key) => key !== "hero");
+  return ["hero", ...rest, ...defaultSectionOrder.filter((key) => key !== "hero" && !rest.includes(key))];
+}
 
 const themes: Record<Theme, { label: string; accent: string; soft: string; ink: string; description: string }> = {
   violet: { label: "Violet studio", accent: "#7157e8", soft: "#f1edff", ink: "#211b35", description: "Polished, modern, product-led" },
@@ -69,7 +74,7 @@ export default function StudioPage() {
         setCtaBody(content.ctaBody || sections.find((item: {type?: string}) => item.type === "cta")?.body || "Join the list and get updates when there’s something worth trying.");
         setTheme(["violet","ocean","ember"].includes(content.theme) ? content.theme : "violet");
         setLayout(["editorial","minimal","bold"].includes(content.layout) ? content.layout : "minimal");
-        setSectionOrder(Array.isArray(content.sectionOrder) ? content.sectionOrder.filter((key: string) => defaultSectionOrder.includes(key)) : defaultSectionOrder);
+        setSectionOrder(normalizeSectionOrder(content.sectionOrder));
         setPublished("/p/" + page.slug);
       } catch (caught) { if (!cancelled) setError(caught instanceof Error ? caught.message : "Could not load this page."); }
     })();
