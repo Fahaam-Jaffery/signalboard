@@ -35,7 +35,37 @@ export async function POST(request: Request) {
 
   // Deterministic generation: no external AI provider or API key is required.
   const generated = buildLandingPage(safeIdea);
-  if (!validateLandingPageConfig(generated.content)) {
+  const rawCustomization = body.customization;
+  const customization = rawCustomization && typeof rawCustomization === "object" && !Array.isArray(rawCustomization)
+    ? rawCustomization as Record<string, unknown>
+    : {};
+  const textValue = (key: string, fallback: string, max: number) =>
+    typeof customization[key] === "string" && (customization[key] as string).trim()
+      ? (customization[key] as string).trim().slice(0, max)
+      : fallback;
+  const requestedTheme = customization.theme;
+  const requestedLayout = customization.layout;
+  const content = {
+    ...generated.content,
+    theme: (["violet", "ocean", "ember"].includes(String(requestedTheme)) ? requestedTheme : generated.content.theme) as "violet" | "ocean" | "ember",
+    layout: (["editorial", "minimal", "bold"].includes(String(requestedLayout)) ? requestedLayout : generated.content.layout) as "editorial" | "minimal" | "bold",
+    headline: textValue("headline", generated.content.headline, 180),
+    subheadline: textValue("subheadline", generated.content.subheadline, 500),
+    audience: textValue("audience", generated.content.audience, 250),
+    problem: textValue("problem", generated.content.problem, 500),
+    solution: textValue("solution", generated.content.solution, 500),
+    benefits: Array.isArray(customization.benefits)
+      ? customization.benefits.filter((item): item is string => typeof item === "string").map((item) => item.trim().slice(0, 160)).filter(Boolean).slice(0, 6)
+      : generated.content.benefits,
+    sections: generated.content.sections.map((section) => {
+      if (section.type === "hero") return { ...section, title: textValue("headline", generated.content.headline, 180), body: textValue("subheadline", generated.content.subheadline, 500) };
+      if (section.type === "problem") return { ...section, body: textValue("problem", generated.content.problem, 500) };
+      if (section.type === "benefits") return { ...section, body: textValue("solution", generated.content.solution, 500), items: Array.isArray(customization.benefits) ? customization.benefits.filter((item): item is string => typeof item === "string").map((item) => item.trim().slice(0, 160)).filter(Boolean).slice(0, 6) : section.items };
+      if (section.type === "cta") return { ...section, title: `Help shape ${safeIdea.title}.`, body: textValue("subheadline", generated.content.subheadline, 500) };
+      return section;
+    }),
+  };
+  if (!validateLandingPageConfig(content)) {
     return NextResponse.json({ error: "The page template could not be validated." }, { status: 500 });
   }
 
@@ -44,8 +74,8 @@ export async function POST(request: Request) {
     user_id: user.id,
     slug,
     title: safeIdea.title,
-    headline: generated.headline,
-    content: generated.content,
+    headline: content.headline,
+    content,
     idea_data: safeIdea,
     status: "published",
   }).select("id,slug,title,headline,created_at").single();
