@@ -72,7 +72,6 @@ export async function POST(request: Request) {
   const skills = typeof body.skills === "string" ? body.skills.slice(0, 2000) : "";
   const interests = typeof body.interests === "string" ? body.interests.slice(0, 2000) : "";
 
-  // Gemini is preferred when GEMINI_API_KEY is configured. OpenAI remains supported as a fallback.
   const geminiKey = process.env.GEMINI_API_KEY;
   const openAIKey = process.env.OPENAI_API_KEY;
   const apiKey = geminiKey || openAIKey;
@@ -87,6 +86,7 @@ export async function POST(request: Request) {
     : "https://api.openai.com/v1";
   const base = (process.env.AI_BASE_URL || defaultBase).replace(/\/$/, "");
   const defaultModel = isGemini ? "gemini-2.5-flash" : "gpt-4o-mini";
+  const model = process.env.AI_MODEL || defaultModel;
 
   try {
     const response = await fetch(base + "/chat/completions", {
@@ -96,7 +96,7 @@ export async function POST(request: Request) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: process.env.AI_MODEL || defaultModel,
+        model,
         temperature: 0.8,
         response_format: { type: "json_object" },
         messages: [
@@ -122,8 +122,20 @@ export async function POST(request: Request) {
     });
 
     if (!response.ok) {
+      const providerMessage = (await response.text()).slice(0, 1200);
+      console.error("AI provider request failed", {
+        status: response.status,
+        provider: isGemini ? "Gemini" : "OpenAI",
+        model,
+        message: providerMessage,
+      });
       return NextResponse.json(
-        { error: "AI provider failed. Check your API key, model, and provider settings." },
+        {
+          error: "AI provider request failed.",
+          details: process.env.NODE_ENV === "development"
+            ? providerMessage
+            : `Provider returned HTTP ${response.status}. Check the Vercel function logs for details.`,
+        },
         { status: 502 },
       );
     }
@@ -132,7 +144,7 @@ export async function POST(request: Request) {
     const parsed = JSON.parse(data.choices?.[0]?.message?.content || "{}");
 
     if (!Array.isArray(parsed.ideas) || !parsed.ideas.length) {
-      throw new Error("Invalid payload");
+      throw new Error("Provider response did not contain an ideas array.");
     }
 
     const ideas = parsed.ideas.slice(0, 5).map((idea: Record<string, unknown>) => ({
@@ -148,9 +160,10 @@ export async function POST(request: Request) {
     }));
 
     return NextResponse.json({ ideas, source: "ai" });
-  } catch {
+  } catch (error) {
+    console.error("AI response processing failed:", error);
     return NextResponse.json(
-      { error: "AI response could not be processed. Please try again." },
+      { error: "AI response could not be processed. Please check the Vercel function logs." },
       { status: 502 },
     );
   }
