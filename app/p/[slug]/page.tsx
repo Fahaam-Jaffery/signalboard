@@ -63,9 +63,9 @@ export default async function PublicPage({ params }: Props) {
 
       <section className="relative isolate mx-auto max-w-7xl px-6 pb-24 pt-14 sm:px-10 sm:pb-32 sm:pt-24">
         <div className="pointer-events-none absolute -top-12 left-1/2 -z-10 h-[28rem] w-[min(90vw,48rem)] -translate-x-1/2 rounded-full blur-[100px]" style={{ background: theme.glow }}/>
-        <div className="mx-auto max-w-5xl text-center">
+        <div className={`mx-auto max-w-5xl ${generated?.layout === "editorial" ? "text-left" : "text-center"}`}>
           <div className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/75 px-4 py-2 text-[11px] font-semibold tracking-wide shadow-sm"><Sparkles size={14} style={{ color: theme.accent }}/>{generated?.sections[0]?.eyebrow || `MADE FOR ${audience.toUpperCase()}`}</div>
-          <h1 className="mx-auto mt-8 max-w-5xl text-5xl font-semibold leading-[.98] tracking-[-.065em] sm:text-7xl lg:text-[5.8rem]">{headline}</h1>
+          <h1 className={`mx-auto mt-8 max-w-5xl font-semibold leading-[.98] tracking-[-.065em] ${generated?.layout === "bold" ? "text-6xl sm:text-8xl lg:text-[7rem]" : generated?.layout === "editorial" ? "text-4xl sm:text-6xl lg:text-[5rem]" : "text-5xl sm:text-7xl lg:text-[5.8rem]"}`}>{headline}</h1>
           <p className="mx-auto mt-7 max-w-2xl text-base leading-8 text-[#777287] sm:text-xl">{subheadline}</p>
           <div id="join" className="mx-auto mt-9 max-w-md scroll-mt-8 rounded-3xl border border-black/[.07] bg-white/90 p-3 shadow-[0_24px_80px_rgba(35,25,65,.10)] sm:p-4">
             <WaitlistForm slug={slug}/>
