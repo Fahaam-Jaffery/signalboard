@@ -1,8 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Check, Eye, LoaderCircle, Sparkles, WandSparkles } from "lucide-react";
 
 type Theme = "violet" | "ocean" | "ember";
@@ -15,12 +14,17 @@ const themes: Record<Theme, { label: string; accent: string; soft: string; ink: 
 };
 
 export default function StudioPage() {
-  const router = useRouter();
-  const search = useSearchParams();
-  const [title, setTitle] = useState(search.get("title") || "");
-  const [description, setDescription] = useState(search.get("description") || "");
-  const [audience, setAudience] = useState(search.get("audience") || "");
-  const [category, setCategory] = useState(search.get("category") || "Micro-SaaS");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [audience, setAudience] = useState("");
+  const [category, setCategory] = useState("Micro-SaaS");
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setTitle(params.get("title") || "");
+    setDescription(params.get("description") || "");
+    setAudience(params.get("audience") || "");
+    setCategory(params.get("category") || "Micro-SaaS");
+  }, []);
   const [headline, setHeadline] = useState("");
   const [subheadline, setSubheadline] = useState("");
   const [problem, setProblem] = useState("");
