@@ -49,3 +49,7 @@ grant delete on table public.landing_pages to authenticated;
 
 -- Remove unnecessary table-level privileges; row-level security does not protect against TRUNCATE.
 revoke truncate, references, trigger on table public.landing_pages from anon, authenticated;
+
+-- Allow authenticated users to delete only their own landing pages.
+drop policy if exists "Users can delete own landing pages" on public.landing_pages;
+create policy "Users can delete own landing pages" on public.landing_pages for delete to authenticated using (auth.uid() = user_id);
