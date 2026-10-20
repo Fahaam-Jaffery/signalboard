@@ -1,1 +1,117 @@
-import type {Metadata} from "next";import Link from "next/link";import {notFound} from "next/navigation";import {Check,CircleDot,Sparkles} from "lucide-react";import {createClient} from "@/lib/supabase/server";import {WaitlistForm} from "@/components/waitlist-form";type Props={params:Promise<{slug:string}>};async function getPage(slug:string){if(!process.env.NEXT_PUBLIC_SUPABASE_URL||!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)return null;const supabase=await createClient();const {data}=await supabase.from("landing_pages").select("id,slug,title,headline,content,status").eq("slug",slug).eq("status","published").maybeSingle();return data;}export async function generateMetadata({params}:Props):Promise<Metadata>{const {slug}=await params;const page=await getPage(slug);if(!page)return {title:"Page not found"};const content=page.content as Record<string,unknown>;return {title:String(page.title),description:String(content.subheadline||page.headline),openGraph:{title:String(page.title),description:String(content.subheadline||page.headline),type:"website"}};}export default async function PublicPage({params}:Props){const {slug}=await params;const page=await getPage(slug);if(!page)notFound();const content=(page.content||{}) as Record<string,unknown>;const benefits=Array.isArray(content.benefits)?content.benefits as string[]:[];return <main className="min-h-screen overflow-hidden bg-[#fbfaff] text-[#201d2d]"><nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6"><Link href="/" className="flex items-center gap-2 font-semibold"><span className="grid h-8 w-8 place-items-center rounded-xl bg-violet-600 text-white"><CircleDot size={17}/></span>signalboard<span className="text-violet-600">.</span></Link><span className="rounded-full border border-violet-200 bg-white/80 px-3 py-1.5 text-[10px] font-semibold text-violet-700">EARLY ACCESS</span></nav><section className="relative mx-auto max-w-5xl px-6 pb-20 pt-16 text-center sm:pt-24"><div className="absolute left-1/2 top-0 -z-0 h-96 w-96 -translate-x-1/2 rounded-full bg-violet-300/30 blur-[110px]"/><div className="relative"><div className="inline-flex items-center gap-2 rounded-full border border-violet-200 bg-white/70 px-3.5 py-2 text-xs font-semibold text-violet-700"><Sparkles size={14}/> MADE FOR {String(content.audience||"EARLY ADOPTERS").toUpperCase()}</div><h1 className="mx-auto mt-7 max-w-4xl text-4xl font-semibold leading-[1.06] tracking-[-.055em] sm:text-6xl lg:text-7xl">{String(content.headline||page.headline)}</h1><p className="mx-auto mt-6 max-w-2xl text-base leading-7 text-[#777287] sm:text-lg">{String(content.subheadline||"")}</p><div className="mx-auto mt-9 max-w-md"><WaitlistForm slug={slug}/><p className="mt-3 text-[10px] text-[#9691a6]">No spam. Just updates when there’s something worth sharing.</p></div><div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-xs text-[#777287]"><span className="inline-flex items-center gap-1.5"><Check size={14} className="text-emerald-600"/> Free early access</span><span className="inline-flex items-center gap-1.5"><Check size={14} className="text-emerald-600"/> Help shape the product</span><span className="inline-flex items-center gap-1.5"><Check size={14} className="text-emerald-600"/> Leave whenever you want</span></div></div></section><section className="mx-auto max-w-6xl px-6 py-12"><div className="grid gap-5 md:grid-cols-2"><article className="rounded-3xl border border-[#ebe7f4] bg-white p-7 sm:p-9"><div className="text-xs font-semibold uppercase tracking-[.15em] text-[#8e879e]">THE PROBLEM</div><h2 className="mt-4 text-2xl font-semibold">Your time should go further.</h2><p className="mt-4 text-sm leading-7 text-[#777287]">{String(content.problem||"The current way of handling this takes more time than it should.")}</p></article><article className="rounded-3xl border border-violet-200 bg-gradient-to-br from-violet-50 to-white p-7 sm:p-9"><div className="text-xs font-semibold uppercase tracking-[.15em] text-violet-700">THE APPROACH</div><h2 className="mt-4 text-2xl font-semibold">Less friction. More forward.</h2><p className="mt-4 text-sm leading-7 text-[#777287]">{String(content.solution||"A more focused approach to the problem.")}</p></article></div><div className="mt-5 rounded-3xl border border-[#ebe7f4] bg-white p-7 sm:p-9"><div className="text-xs font-semibold uppercase tracking-[.15em] text-[#8e879e]">WHY JOIN EARLY</div><h2 className="mt-3 text-2xl font-semibold">Be part of what comes next.</h2><div className="mt-6 grid gap-4 sm:grid-cols-3">{benefits.map((b,i)=><div key={b} className="flex items-start gap-3"><span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-violet-100 text-violet-700 text-xs font-bold">0{i+1}</span><p className="pt-1 text-sm leading-6 text-[#777287]">{b}</p></div>)}</div></div></section><footer className="mt-12 border-t border-[#ebe7f4] px-6 py-8 text-center text-xs text-[#9691a6]">An early concept page powered by <Link href="/" className="font-semibold text-[#5e4acb]">SignalBoard</Link>.</footer></main>}
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { ArrowDown, ArrowRight, Check, CircleDot, Sparkles } from "lucide-react";
+import { createClient } from "@/lib/supabase/server";
+import { WaitlistForm } from "@/components/waitlist-form";
+import { validateLandingPageConfig, type LandingPageConfig } from "@/lib/landing-page-generator";
+
+type Props = { params: Promise<{ slug: string }> };
+
+async function getPage(slug: string) {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) return null;
+  const supabase = await createClient();
+  const { data } = await supabase.from("landing_pages")
+    .select("id,slug,title,headline,content,status")
+    .eq("slug", slug).eq("status", "published").maybeSingle();
+  return data;
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const page = await getPage(slug);
+  if (!page) return { title: "Page not found" };
+  const content = (page.content || {}) as Record<string, unknown>;
+  return {
+    title: String(page.title),
+    description: String(content.subheadline || page.headline),
+    openGraph: { title: String(page.title), description: String(content.subheadline || page.headline), type: "website" },
+  };
+}
+
+const themes = {
+  violet: { accent: "#7157e8", soft: "#f1edff", glow: "rgba(142, 116, 255, .22)", ink: "#211b35" },
+  ocean: { accent: "#087e8b", soft: "#e6f7f8", glow: "rgba(34, 190, 199, .20)", ink: "#122c34" },
+  ember: { accent: "#d65b35", soft: "#fff0e9", glow: "rgba(255, 142, 91, .22)", ink: "#38221d" },
+};
+
+export default async function PublicPage({ params }: Props) {
+  const { slug } = await params;
+  const page = await getPage(slug);
+  if (!page) notFound();
+
+  const raw = (page.content || {}) as Record<string, unknown>;
+  const generated = validateLandingPageConfig(raw) ? raw as LandingPageConfig : null;
+  const theme = themes[generated?.theme || "violet"];
+  const benefits = generated?.benefits || (Array.isArray(raw.benefits) ? raw.benefits as string[] : []);
+  const audience = generated?.audience || String(raw.audience || "early adopters");
+  const headline = generated?.headline || String(raw.headline || page.headline);
+  const subheadline = generated?.subheadline || String(raw.subheadline || "");
+  const problem = generated?.problem || String(raw.problem || "The current way takes more time and energy than it should.");
+  const solution = generated?.solution || String(raw.solution || subheadline);
+  const sections = generated?.sections || [];
+
+  return (
+    <main className="min-h-screen overflow-hidden bg-[#fcfbff]" style={{ color: theme.ink, ["--page-accent" as string]: theme.accent, ["--page-soft" as string]: theme.soft }}>
+      <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6 sm:px-10">
+        <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">
+          <span className="grid h-9 w-9 place-items-center rounded-xl text-white" style={{ background: theme.accent }}><CircleDot size={18}/></span>
+          signalboard<span style={{ color: theme.accent }}>.</span>
+        </Link>
+        <a href="#join" className="rounded-full border border-black/10 bg-white/80 px-4 py-2 text-xs font-semibold shadow-sm transition hover:-translate-y-0.5">Get early access <ArrowRight size={13} className="ml-1 inline"/></a>
+      </nav>
+
+      <section className="relative isolate mx-auto max-w-7xl px-6 pb-24 pt-14 sm:px-10 sm:pb-32 sm:pt-24">
+        <div className="pointer-events-none absolute -top-12 left-1/2 -z-10 h-[28rem] w-[min(90vw,48rem)] -translate-x-1/2 rounded-full blur-[100px]" style={{ background: theme.glow }}/>
+        <div className="mx-auto max-w-5xl text-center">
+          <div className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/75 px-4 py-2 text-[11px] font-semibold tracking-wide shadow-sm"><Sparkles size={14} style={{ color: theme.accent }}/>{generated?.sections[0]?.eyebrow || `MADE FOR ${audience.toUpperCase()}`}</div>
+          <h1 className="mx-auto mt-8 max-w-5xl text-5xl font-semibold leading-[.98] tracking-[-.065em] sm:text-7xl lg:text-[5.8rem]">{headline}</h1>
+          <p className="mx-auto mt-7 max-w-2xl text-base leading-8 text-[#777287] sm:text-xl">{subheadline}</p>
+          <div id="join" className="mx-auto mt-9 max-w-md scroll-mt-8 rounded-3xl border border-black/[.07] bg-white/90 p-3 shadow-[0_24px_80px_rgba(35,25,65,.10)] sm:p-4">
+            <WaitlistForm slug={slug}/>
+            <p className="mt-3 text-[10px] text-[#9691a6]">No spam. Just thoughtful updates when there’s something worth sharing.</p>
+          </div>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-xs text-[#777287]"><span className="inline-flex items-center gap-1.5"><Check size={14} style={{ color: theme.accent }}/> Free early access</span><span className="inline-flex items-center gap-1.5"><Check size={14} style={{ color: theme.accent }}/> Built around feedback</span><span className="inline-flex items-center gap-1.5"><Check size={14} style={{ color: theme.accent }}/> Leave whenever you want</span></div>
+          <a href="#details" className="mt-12 inline-flex items-center gap-2 text-xs font-medium text-[#777287] transition hover:opacity-70">Explore the idea <ArrowDown size={14}/></a>
+        </div>
+      </section>
+
+      <section id="details" className="mx-auto max-w-7xl px-6 pb-24 sm:px-10 sm:pb-32">
+        <div className="grid gap-5 md:grid-cols-2">
+          <article className="rounded-[2rem] border border-black/[.07] bg-white p-7 sm:p-10">
+            <div className="text-[10px] font-semibold uppercase tracking-[.2em] text-[#9691a6]">THE CHALLENGE</div>
+            <h2 className="mt-5 max-w-md text-3xl font-semibold leading-tight tracking-[-.045em] sm:text-4xl">The current way takes too much effort.</h2>
+            <p className="mt-5 text-sm leading-7 text-[#777287]">{problem}</p>
+          </article>
+          <article className="relative overflow-hidden rounded-[2rem] p-7 sm:p-10" style={{ background: theme.soft }}>
+            <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full blur-3xl" style={{ background: theme.glow }}/>
+            <div className="relative text-[10px] font-semibold uppercase tracking-[.2em]" style={{ color: theme.accent }}>THE APPROACH</div>
+            <h2 className="relative mt-5 max-w-md text-3xl font-semibold leading-tight tracking-[-.045em] sm:text-4xl">Less friction. More forward.</h2>
+            <p className="relative mt-5 text-sm leading-7 text-[#686277]">{solution}</p>
+          </article>
+        </div>
+
+        <div className="mt-5 rounded-[2rem] border border-black/[.07] bg-white p-7 sm:p-10">
+          <div className="text-[10px] font-semibold uppercase tracking-[.2em]" style={{ color: theme.accent }}>WHY IT MATTERS</div>
+          <h2 className="mt-4 text-3xl font-semibold tracking-[-.045em] sm:text-4xl">A more focused way to move forward.</h2>
+          <div className="mt-8 grid gap-6 sm:grid-cols-3">
+            {benefits.map((benefit, index) => <div key={benefit} className="flex items-start gap-3"><span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl text-xs font-semibold" style={{ background: theme.soft, color: theme.accent }}>0{index + 1}</span><p className="pt-1 text-sm leading-6 text-[#777287]">{benefit}</p></div>)}
+          </div>
+        </div>
+
+        {sections.some((section) => section.type === "howItWorks") && <div className="mt-5 rounded-[2rem] border border-black/[.07] bg-white p-7 sm:p-10">
+          <div className="text-[10px] font-semibold uppercase tracking-[.2em]" style={{ color: theme.accent }}>HOW IT STARTS</div>
+          <h2 className="mt-4 text-3xl font-semibold tracking-[-.045em] sm:text-4xl">Small first step. Real feedback.</h2>
+          <div className="mt-8 grid gap-4 sm:grid-cols-3">{(sections.find((section) => section.type === "howItWorks")?.items || []).map((item, index) => <div key={item} className="rounded-2xl p-5" style={{ background: theme.soft }}><div className="text-xs font-semibold" style={{ color: theme.accent }}>STEP 0{index + 1}</div><p className="mt-3 text-sm leading-6">{item}</p></div>)}</div>
+        </div>}
+
+        <div className="mt-5 flex flex-col items-start justify-between gap-6 rounded-[2rem] p-7 sm:flex-row sm:items-center sm:p-10" style={{ background: theme.ink, color: "#fff" }}>
+          <div><div className="text-[10px] font-semibold uppercase tracking-[.2em]" style={{ color: theme.accent }}>BE PART OF THE FIRST WAVE</div><h2 className="mt-3 max-w-2xl text-3xl font-semibold tracking-[-.04em] sm:text-4xl">Help shape what comes next.</h2><p className="mt-3 max-w-xl text-sm leading-6 text-white/65">Join the list and get updates when there’s something worth trying.</p></div>
+          <a href="#join" className="shrink-0 rounded-xl px-5 py-3 text-sm font-semibold text-white transition hover:opacity-90" style={{ background: theme.accent }}>Join the waitlist <ArrowRight size={15} className="ml-2 inline"/></a>
+        </div>
+      </section>
+
+      <footer className="border-t border-black/[.07] px-6 py-8 text-center text-xs text-[#9691a6]">An early concept page powered by <Link href="/" className="font-semibold" style={{ color: theme.accent }}>SignalBoard</Link>.</footer>
+    </main>
+  );
+}
