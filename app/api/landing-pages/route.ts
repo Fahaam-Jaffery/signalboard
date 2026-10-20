@@ -56,7 +56,7 @@ export async function POST(request: Request) {
     solution: textValue("solution", generated.content.solution, 500),
     benefitsTitle: textValue("benefitsTitle", "A more focused way to move forward.", 180),
     howTitle: textValue("howTitle", "Small first step. Real feedback.", 180),
-    howSteps: Array.isArray(customization.howSteps) ? customization.howSteps.filter((item): item is string => typeof item === "string").map((item) => item.trim().slice(0, 180)).filter(Boolean).slice(0, 6) : [],
+    howSteps: Array.isArray(customization.howSteps) ? customization.howSteps.filter((item): item is string => typeof item === "string").map((item) => item.trim().slice(0, 180)).filter(Boolean).slice(0, 6) : (generated.content.sections.find((section) => section.type === "howItWorks")?.items || []),
     benefits: Array.isArray(customization.benefits)
       ? customization.benefits.filter((item): item is string => typeof item === "string").map((item) => item.trim().slice(0, 160)).filter(Boolean).slice(0, 6)
       : generated.content.benefits,
