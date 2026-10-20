@@ -25,9 +25,14 @@ export async function DELETE(_request: Request, { params }: Context) {
     .select("id").eq("id", id).eq("user_id", user.id).maybeSingle();
   if (lookupError) return NextResponse.json({ error: "Could not verify page ownership." }, { status: 500 });
   if (!page) return NextResponse.json({ error: "Landing page not found." }, { status: 404 });
-  const { error: waitlistError } = await supabase.from("waitlist").delete().eq("landing_page_id", id);
-  if (waitlistError) return NextResponse.json({ error: "Could not remove the page's waitlist records. The page was not deleted." }, { status: 500 });
-  const { error } = await supabase.from("landing_pages").delete().eq("id", id).eq("user_id", user.id);
+  let { error } = await supabase.from("landing_pages").delete().eq("id", id).eq("user_id", user.id);
+  if (error?.code === "23503") {
+    // Only remove signups when a foreign-key constraint proves they prevent page deletion.
+    const { error: waitlistError } = await supabase.from("waitlist").delete().eq("landing_page_id", id);
+    if (waitlistError) return NextResponse.json({ error: "Could not remove the page's waitlist records. The page was not deleted." }, { status: 500 });
+    const retry = await supabase.from("landing_pages").delete().eq("id", id).eq("user_id", user.id);
+    error = retry.error;
+  }
   if (error) return NextResponse.json({ error: "Could not delete this landing page." }, { status: 500 });
   return NextResponse.json({ success: true });
 }
