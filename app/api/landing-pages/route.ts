@@ -54,13 +54,17 @@ export async function POST(request: Request) {
     audience: textValue("audience", generated.content.audience, 250),
     problem: textValue("problem", generated.content.problem, 500),
     solution: textValue("solution", generated.content.solution, 500),
+    benefitsTitle: textValue("benefitsTitle", "A more focused way to move forward.", 180),
+    howTitle: textValue("howTitle", "Small first step. Real feedback.", 180),
+    howSteps: Array.isArray(customization.howSteps) ? customization.howSteps.filter((item): item is string => typeof item === "string").map((item) => item.trim().slice(0, 180)).filter(Boolean).slice(0, 6) : [],
     benefits: Array.isArray(customization.benefits)
       ? customization.benefits.filter((item): item is string => typeof item === "string").map((item) => item.trim().slice(0, 160)).filter(Boolean).slice(0, 6)
       : generated.content.benefits,
     sections: generated.content.sections.map((section) => {
       if (section.type === "hero") return { ...section, title: textValue("headline", generated.content.headline, 180), body: textValue("subheadline", generated.content.subheadline, 500) };
-      if (section.type === "problem") return { ...section, body: textValue("problem", generated.content.problem, 500) };
-      if (section.type === "benefits") return { ...section, body: textValue("solution", generated.content.solution, 500), items: Array.isArray(customization.benefits) ? customization.benefits.filter((item): item is string => typeof item === "string").map((item) => item.trim().slice(0, 160)).filter(Boolean).slice(0, 6) : section.items };
+      if (section.type === "problem") return { ...section, title: textValue("challengeTitle", section.title, 180), body: textValue("problem", generated.content.problem, 500) };
+      if (section.type === "benefits") return { ...section, title: textValue("approachTitle", section.title, 180), body: textValue("solution", generated.content.solution, 500), items: Array.isArray(customization.benefits) ? customization.benefits.filter((item): item is string => typeof item === "string").map((item) => item.trim().slice(0, 160)).filter(Boolean).slice(0, 6) : section.items };
+      if (section.type === "howItWorks") return { ...section, title: textValue("howTitle", section.title, 180), items: Array.isArray(customization.howSteps) ? customization.howSteps.filter((item): item is string => typeof item === "string").map((item) => item.trim().slice(0, 180)).filter(Boolean).slice(0, 6) : section.items };
       if (section.type === "cta") return { ...section, title: `Help shape ${safeIdea.title}.`, body: textValue("subheadline", generated.content.subheadline, 500) };
       return section;
     }),
