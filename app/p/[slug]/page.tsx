@@ -52,7 +52,7 @@ export default async function PublicPage({ params }: Props) {
   const sections = generated?.sections || [];
 
   return (
-    <main className="min-h-screen overflow-hidden bg-[#fcfbff]" style={{ color: theme.ink, ["--page-accent" as string]: theme.accent, ["--page-soft" as string]: theme.soft }}>
+    <main className="min-h-screen overflow-hidden bg-[#fcfbff]" style={{ color: theme.ink }}>
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6 sm:px-10">
         <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">
           <span className="grid h-9 w-9 place-items-center rounded-xl text-white" style={{ background: theme.accent }}><CircleDot size={18}/></span>
