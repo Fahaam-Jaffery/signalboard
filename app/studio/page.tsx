@@ -18,6 +18,7 @@ const themes: Record<Theme, { label: string; accent: string; soft: string; ink: 
 
 export default function StudioPage() {
   const [pageId, setPageId] = useState("");
+  const [projectId, setProjectId] = useState("");
   const [sectionOrder, setSectionOrder] = useState<SectionKey[]>(defaultSectionOrder);
   const [draggingSection, setDraggingSection] = useState<SectionKey | null>(null);
   const [title, setTitle] = useState("");
@@ -27,16 +28,28 @@ export default function StudioPage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const existingId = params.get("pageId");
+    const linkedProjectId = params.get("projectId");
+    setProjectId(linkedProjectId || "");
     setTitle(params.get("title") || "");
     setDescription(params.get("description") || "");
     setAudience(params.get("audience") || "");
     setCategory(params.get("category") || "Micro-SaaS");
-    if (!existingId) return;
-    setPageId(existingId);
+    if (!existingId && !linkedProjectId) return;
+    if (existingId) setPageId(existingId);
     let cancelled = false;
     (async () => {
       try {
-        const response = await fetch("/api/landing-pages/" + encodeURIComponent(existingId));
+        let targetPageId = existingId;
+        if (!targetPageId && linkedProjectId) {
+          const projectResponse = await fetch("/api/projects/" + encodeURIComponent(linkedProjectId));
+          const projectData = await projectResponse.json();
+          if (!projectResponse.ok) throw new Error(projectData.error || "Could not load the linked product workspace.");
+          targetPageId = projectData.project?.workspace?.landingPageId || "";
+          if (!targetPageId) return;
+          if (!cancelled) setPageId(targetPageId);
+        }
+        if (!targetPageId) return;
+        const response = await fetch("/api/landing-pages/" + encodeURIComponent(targetPageId));
         const data = await response.json();
         if (!response.ok) throw new Error(data.error || "Could not load this page.");
         if (cancelled) return;
@@ -125,6 +138,20 @@ export default function StudioPage() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Could not publish the landing page.");
       setPublished(data.url || `/p/${data.page.slug}`);
+      if (data.page?.id) setPageId(data.page.id);
+      if (projectId && !pageId && data.page?.id) {
+        try {
+          const projectResponse = await fetch("/api/projects/" + encodeURIComponent(projectId));
+          const projectData = await projectResponse.json();
+          if (projectResponse.ok && projectData.project) {
+            const project = projectData.project;
+            await fetch("/api/projects/" + encodeURIComponent(projectId), {
+              method: "PATCH", headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ name: project.name, description: project.description, audience: project.audience, category: project.category, stage: "launch", workspace: { ...(project.workspace || {}), landingPageId: data.page.id } }),
+            });
+          }
+        } catch { /* Publishing succeeded; linking can be retried from the project workspace. */ }
+      }
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Could not publish the landing page.");
     } finally {
