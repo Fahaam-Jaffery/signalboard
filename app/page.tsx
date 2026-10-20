@@ -10,7 +10,7 @@ const pillars = [
 
 export default function Home() {
   return <main className="cinematic-home overflow-hidden">
-    <nav className="cinematic-nav mx-auto flex max-w-7xl items-center justify-between px-6 py-5 lg:px-10">
+    <nav className="cinematic-nav mx-auto flex max-w-7xl items-center justify-between px-4 py-3 lg:px-8">
       <Link href="/" className="brand-lockup flex items-center gap-3 font-semibold tracking-tight">
         <span className="brand-mark grid h-9 w-9 place-items-center rounded-xl"><CircleDot size={19}/></span>
         <span className="text-[15px]">signalboard<span className="brand-period">.</span></span>
@@ -30,21 +30,21 @@ export default function Home() {
       <div className="hero-orb hero-orb-two pointer-events-none absolute right-[22%] top-12 h-[360px] w-[360px] rounded-full"/>
       <div className="hero-copy relative z-10">
         <div className="hero-kicker mb-7 inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-[10px] font-semibold uppercase tracking-[.16em]"><span className="status-pip"/><Sparkles size={13}/> A clearer path from idea to evidence</div>
-        <h1 className="hero-heading max-w-2xl text-5xl font-semibold leading-[1.02] tracking-[-.065em] sm:text-6xl lg:text-[76px]">Make your next<br/>move <span className="luminous-type">mean something.</span></h1>
-        <p className="mt-7 max-w-xl text-base leading-7 text-white/55 sm:text-lg sm:leading-8">Discover a promising product idea, turn it into a page, and learn whether people care—before you spend weeks building in the dark.</p>
+        <h1 className="hero-heading max-w-2xl text-5xl font-semibold leading-[1.02] tracking-[-.065em] sm:text-6xl lg:text-[76px]">Find product ideas.<br/><span className="luminous-type">Validate before you build.</span></h1>
+        <p className="mt-7 max-w-xl text-base leading-7 text-white/55 sm:text-lg sm:leading-8">SignalBoard helps you explore product ideas, publish a landing page, and collect early interest—so you can test your assumptions before investing in a full build.</p>
         <div className="mt-9 flex flex-col gap-3 sm:flex-row">
           <Link href="/signup" className="cinematic-button cinematic-button-primary inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold">Find your signal <ArrowRight size={16}/></Link>
           <a href="#workflow" className="cinematic-button cinematic-button-secondary inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold">Explore the workflow <ArrowDownRight size={15}/></a>
         </div>
         <div className="mt-10 flex flex-wrap items-center gap-x-5 gap-y-3 text-xs text-white/45">
-          <span className="inline-flex items-center gap-2"><ShieldCheck size={14} className="text-white/70"/> Built for small, smart experiments</span><span className="hidden h-1 w-1 rounded-full bg-white/25 sm:block"/><span>Clarity over guesswork</span>
+          <span className="inline-flex items-center gap-2"><ShieldCheck size={14} className="text-white/70"/> Built for small, smart experiments</span><span className="hidden h-1 w-1 rounded-full bg-white/25 sm:block"/><span>Explore. Publish. Learn.</span>
         </div>
       </div>
       <div className="relative z-10 mx-auto w-full max-w-[650px] lg:ml-auto">
         <div className="demo-halo absolute -inset-8 rounded-[40px]"/>
         <LandingDemo/>
         <div className="floating-note floating-note-top hidden sm:flex"><span className="floating-note-icon"><Target size={15}/></span><span><b>Signal over noise</b><small>Focus on what matters</small></span></div>
-        <div className="floating-note floating-note-bottom hidden sm:flex"><span className="floating-note-icon success"><Check size={15}/></span><span><b>Tested in the real world</b><small>Learn before you scale</small></span></div>
+        <div className="floating-note floating-note-bottom hidden sm:flex"><span className="floating-note-icon success"><Check size={15}/></span><span><b>Designed to test assumptions</b><small>Learn before you scale</small></span></div>
       </div>
     </section>
 
