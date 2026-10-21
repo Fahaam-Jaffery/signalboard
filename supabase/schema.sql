@@ -45,6 +45,10 @@ grant select, insert, update, delete on table public.product_projects to authent
 grant select, insert, update on table public.landing_pages to authenticated;
 grant select on table public.landing_pages to anon;
 
+-- Table privileges for waitlist operations; RLS policies still restrict which rows are accessible.
+grant select on table public.waitlist to authenticated;
+grant insert on table public.waitlist to anon, authenticated;
+
 grant delete on table public.landing_pages to authenticated;
 
 -- Remove unnecessary table-level privileges; row-level security does not protect against TRUNCATE.
