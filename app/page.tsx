@@ -51,6 +51,7 @@ export default function Home() {
       </div>
     </section>
 
+    <ScrollReveal>
     <section id="principles" className="principles-band border-y border-white/[.08]">
       <div className="mx-auto grid max-w-7xl gap-6 px-6 py-8 sm:grid-cols-3 lg:px-10">
         {pillars.map((item) => <article key={item.n} className="principle-item group flex items-start gap-4 rounded-2xl p-3">
@@ -59,6 +60,7 @@ export default function Home() {
         </article>)}
       </div>
     </section>
+    </ScrollReveal>
 
     <ScrollReveal>
       <section id="idea-lab" className="signal-lab-section relative mx-auto max-w-7xl overflow-hidden px-6 py-24 lg:px-10 lg:py-32">
@@ -91,6 +93,7 @@ export default function Home() {
       </section>
     </ScrollReveal>
 
+    <ScrollReveal>
     <section id="workflow" className="workflow-section mx-auto max-w-7xl px-6 py-24 lg:px-10 lg:py-32">
       <div className="section-label"><span/> THE SIGNAL LOOP</div>
       <div className="mt-5 grid gap-8 md:grid-cols-[.9fr_1.1fr] md:items-end">
@@ -110,7 +113,9 @@ export default function Home() {
         </article>)}
       </div>
     </section>
+    </ScrollReveal>
 
+    <ScrollReveal>
     <section className="px-6 pb-24 lg:px-10">
       <div className="final-cta relative mx-auto max-w-7xl overflow-hidden rounded-[28px] px-7 py-12 sm:px-12 sm:py-16">
         <div className="cta-grid absolute inset-0"/>
@@ -121,6 +126,7 @@ export default function Home() {
         </div>
       </div>
     </section>
+    </ScrollReveal>
     <footer className="cinematic-footer mx-auto flex max-w-7xl flex-col gap-4 border-t border-white/[.08] px-6 py-7 text-xs text-white/40 sm:flex-row sm:items-center sm:justify-between lg:px-10"><Link href="/" className="flex items-center gap-2 font-semibold text-white/75"><CircleDot size={16}/> signalboard<span className="brand-period">.</span></Link><span>Build with curiosity. Validate with evidence.</span><div className="flex gap-5"><Link href="/login">Log in</Link><Link href="/signup">Create account</Link></div></footer>
   </main>;
 }
