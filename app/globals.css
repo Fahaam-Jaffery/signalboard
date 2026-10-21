@@ -604,3 +604,11 @@ button.live-metric-card:hover { transform:translateY(-2px); border-color:rgba(16
   .nav-mega-menu,.nav-mobile-sheet,.command-dialog,.command-backdrop,.idea-canvas-result { animation:none !important; }
   .nav-link,.nav-direct-link::after,.mega-menu-item,.mega-menu-arrow,.period-switch button,.live-metric-card,.canvas-secondary-action,.canvas-primary-action { transition:none !important; }
 }
+
+@media (max-width: 390px) {
+  .nav-cta-label { display:none; }
+  .cinematic-nav { padding-left:10px; padding-right:10px; }
+  .cinematic-nav .brand-lockup { gap:8px; }
+  .cinematic-nav .brand-mark { width:34px; height:34px; }
+  .cinematic-nav > div:last-child { gap:5px; }
+}
