@@ -17,7 +17,7 @@ export function SignalLab() {
     <div className="signal-lab-choices flex flex-col gap-3">
       {lanes.map((lane, index) => {
         const LaneIcon = lane.icon;
-        return <button type="button" key={lane.id} onClick={() => setActive(index)} aria-pressed={active === index} className={"signal-choice signal-choice-" + lane.color + " flex items-center gap-4 rounded-2xl p-4 text-left transition-all " + (active === index ? "is-active" : "")}>
+        return <button type="button" key={lane.id} onClick={() => setActive(index)} aria-pressed={active === index} className={"signal-choice signal-choice-" + lane.color + " flex items-center gap-4 rounded-2xl p-4 text-left transition-all " + (active === index ? "is-active is-active-" + lane.color : "")}>
           <span className="signal-choice-icon"><LaneIcon size={20}/></span>
           <span className="min-w-0 flex-1"><span className="block text-sm font-semibold text-white">{lane.label}</span><span className="mt-1 block text-xs text-white/65">Explore this direction</span></span>
           <span className="signal-choice-index">0{index + 1}</span>
