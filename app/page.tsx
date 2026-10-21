@@ -5,6 +5,9 @@ import { ScrollReveal } from "@/components/scroll-reveal";
 import { SignalLab } from "@/components/signal-lab";
 import { ValidationPreview } from "@/components/validation-preview";
 import { PremiumCursor } from "@/components/premium-cursor";
+import { CinematicNav } from "@/components/cinematic-nav";
+import { LiveSignalDashboard } from "@/components/live-signal-dashboard";
+import { IdeaCanvas } from "@/components/idea-canvas";
 
 const pillars = [
   { n: "01", icon: Compass, title: "Find a sharper idea", desc: "Start with your skills, interests, and constraints—not another generic list of startup ideas.", tag: "Discover" },
@@ -15,20 +18,8 @@ const pillars = [
 export default function Home() {
   return <main className="cinematic-home overflow-hidden">
     <PremiumCursor />
-    <nav className="cinematic-nav mx-auto flex max-w-7xl items-center justify-between px-4 py-3 lg:px-8">
-      <Link href="/" className="brand-lockup flex items-center gap-3 font-semibold tracking-tight">
-        <span className="brand-mark grid h-9 w-9 place-items-center rounded-xl"><CircleDot size={19}/></span>
-        <span className="text-[15px]">signalboard<span className="brand-period">.</span></span>
-      </Link>
-      <div className="hidden items-center gap-8 text-sm text-white/55 md:flex">
-        <a className="nav-link" href="#workflow">How it works</a>
-        <a className="nav-link" href="#principles">Why SignalBoard</a>
-      </div>
-      <div className="flex items-center gap-3">
-        <Link href="/login" className="rounded-full px-4 py-2.5 text-sm text-white/70 transition hover:text-white">Log in</Link>
-        <Link href="/signup" className="cinematic-button cinematic-button-primary inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold sm:px-5">Start exploring <ArrowUpRight size={15}/></Link>
-      </div>
-    </nav>
+    <CinematicNav />
+
 
     <section className="cinematic-hero relative mx-auto grid max-w-7xl items-center gap-14 px-6 pb-24 pt-14 lg:grid-cols-[.94fr_1.06fr] lg:px-10 lg:pb-32 lg:pt-20">
       <div className="hero-orb hero-orb-one pointer-events-none absolute -left-56 top-0 h-[520px] w-[520px] rounded-full"/>
@@ -76,6 +67,17 @@ export default function Home() {
     </ScrollReveal>
 
     <ScrollReveal>
+      <section id="idea-canvas" className="idea-canvas-section mx-auto max-w-7xl px-6 py-20 lg:px-10 lg:py-28">
+        <div className="section-label"><span/> SHAPE THE POSSIBILITY</div>
+        <div className="mt-5 grid gap-8 md:grid-cols-[.82fr_1.18fr] md:items-end">
+          <h2 className="section-heading max-w-xl text-3xl font-semibold tracking-[-.055em] sm:text-5xl">From a hunch<br/><span className="luminous-type">to a testable idea.</span></h2>
+          <p className="max-w-xl text-sm leading-7 text-white/70 md:justify-self-end md:text-base">Choose who you want to help and what you want to improve. This tiny canvas will shape a starting hypothesis and the first question worth testing—without pretending a guess is market proof.</p>
+        </div>
+        <div className="mt-10"><IdeaCanvas /></div>
+      </section>
+    </ScrollReveal>
+
+    <ScrollReveal>
       <section id="validation-preview" className="validation-section relative mx-auto max-w-7xl px-6 py-20 lg:px-10 lg:py-28">
         <div className="validation-backdrop pointer-events-none absolute inset-x-6 top-8 bottom-8 rounded-[32px] lg:inset-x-10"/>
         <div className="relative grid items-center gap-12 rounded-[32px] border border-white/[.1] px-6 py-10 sm:px-10 lg:grid-cols-[.9fr_1.1fr] lg:px-14 lg:py-14">
@@ -92,6 +94,17 @@ export default function Home() {
           </div>
           <ValidationPreview />
         </div>
+      </section>
+    </ScrollReveal>
+
+    <ScrollReveal>
+      <section id="live-signals" className="live-signals-section mx-auto max-w-7xl px-6 py-20 lg:px-10 lg:py-28">
+        <div className="section-label"><span/> SEE THE SIGNAL, NOT JUST THE NOISE</div>
+        <div className="mt-5 grid gap-8 md:grid-cols-[.82fr_1.18fr] md:items-end">
+          <h2 className="section-heading max-w-xl text-3xl font-semibold tracking-[-.055em] sm:text-5xl">A little evidence<br/><span className="luminous-type">changes everything.</span></h2>
+          <p className="max-w-xl text-sm leading-7 text-white/70 md:justify-self-end md:text-base">Explore an illustrative signal dashboard. Switch time ranges, inspect different metrics, and see how a focused experiment can turn attention into a question you can actually answer.</p>
+        </div>
+        <div className="mt-10"><LiveSignalDashboard /></div>
       </section>
     </ScrollReveal>
 
