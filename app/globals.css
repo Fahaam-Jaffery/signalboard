@@ -612,3 +612,17 @@ button.live-metric-card:hover { transform:translateY(-2px); border-color:rgba(16
   .cinematic-nav .brand-mark { width:34px; height:34px; }
   .cinematic-nav > div:last-child { gap:5px; }
 }
+
+
+/* Quick-search modal owns its scroll; keep the page behind it completely still. */
+.command-backdrop { overflow-y:auto; overscroll-behavior:contain; }
+.command-dialog { max-height:calc(100dvh - 48px); display:flex; flex-direction:column; }
+.command-results { min-height:0; max-height:min(52vh,440px); overscroll-behavior:contain; scrollbar-width:thin; scrollbar-color:rgba(157,174,255,.62) rgba(255,255,255,.035); }
+.command-results::-webkit-scrollbar { width:7px; }
+.command-results::-webkit-scrollbar-track { margin:10px 0; border-radius:999px; background:rgba(255,255,255,.035); }
+.command-results::-webkit-scrollbar-thumb { border:2px solid transparent; border-radius:999px; background:linear-gradient(180deg,rgba(174,165,255,.88),rgba(105,214,255,.72)) padding-box; }
+.command-results::-webkit-scrollbar-thumb:hover { background:linear-gradient(180deg,#c6bdff,#91eaff) padding-box; }
+@media (max-width:640px) {
+  .command-dialog { max-height:calc(100dvh - 24px); }
+  .command-results { max-height:calc(100dvh - 220px); }
+}
