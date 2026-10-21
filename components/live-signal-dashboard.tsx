@@ -14,7 +14,6 @@ export function LiveSignalDashboard() {
   const [period, setPeriod] = useState<(typeof periods)[number]>("30 days");
   const [metric, setMetric] = useState<"visitors" | "interest">("visitors");
   const data = snapshots[period];
-  const points = useMemo(() => data.series.map((value, i) => (i * 100) + "," + (104 - value)).join(" "), [data]);
   const svgPoints = useMemo(() => data.series.map((value, i) => (i * 100) + "," + (104 - value)).join(" "), [data]);
   const metrics = [
     { id: "visitors" as const, label: "Page visitors", value: data.visitors, change: data.change, icon: Eye, color: "violet" },
