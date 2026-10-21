@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { ArrowDownRight, ArrowRight, ArrowUpRight, Check, CircleDot, Compass, Layers3, ShieldCheck, Sparkles, Target, TrendingUp } from "lucide-react";
 import { LandingDemo } from "@/components/landing-demo";
+import { ScrollReveal } from "@/components/scroll-reveal";
+import { SignalLab } from "@/components/signal-lab";
+import { ValidationPreview } from "@/components/validation-preview";
 
 const pillars = [
   { n: "01", icon: Compass, title: "Find a sharper idea", desc: "Start with your skills, interests, and constraints—not another generic list of startup ideas.", tag: "Discover" },
@@ -57,6 +60,37 @@ export default function Home() {
       </div>
     </section>
 
+    <ScrollReveal>
+      <section id="idea-lab" className="signal-lab-section relative mx-auto max-w-7xl overflow-hidden px-6 py-24 lg:px-10 lg:py-32">
+        <div className="section-label"><span/> FROM CURIOSITY TO CLARITY</div>
+        <div className="mt-5 grid gap-8 md:grid-cols-[.82fr_1.18fr] md:items-end">
+          <h2 className="section-heading max-w-xl text-3xl font-semibold tracking-[-.055em] sm:text-5xl">Your next idea<br/><span className="luminous-type">is closer than you think.</span></h2>
+          <p className="max-w-xl text-sm leading-7 text-white/70 md:justify-self-end md:text-base">Explore a few directions, see how they connect to your strengths, and choose a promising thread to pull. This interactive sample shows the kind of focused discovery SignalBoard is built for.</p>
+        </div>
+        <div className="mt-12"><SignalLab /></div>
+      </section>
+    </ScrollReveal>
+
+    <ScrollReveal>
+      <section id="validation-preview" className="validation-section relative mx-auto max-w-7xl px-6 py-20 lg:px-10 lg:py-28">
+        <div className="validation-backdrop pointer-events-none absolute inset-x-6 top-8 bottom-8 rounded-[32px] lg:inset-x-10"/>
+        <div className="relative grid items-center gap-12 rounded-[32px] border border-white/[.1] px-6 py-10 sm:px-10 lg:grid-cols-[.9fr_1.1fr] lg:px-14 lg:py-14">
+          <div>
+            <div className="section-label"><span/> MAKE IT REAL</div>
+            <h2 className="mt-5 max-w-xl text-3xl font-semibold leading-tight tracking-[-.055em] text-white sm:text-5xl">Don’t just describe it.<br/><span className="text-cyan-200">Put it to the test.</span></h2>
+            <p className="mt-5 max-w-lg text-sm leading-7 text-white/70 sm:text-base">Shape a clear promise, give people one meaningful next step, and learn from the response. Explore this miniature landing-page concept and switch between its preview and signal view.</p>
+            <div className="mt-7 flex flex-wrap gap-3">
+              <span className="feature-chip"><Sparkles size={14}/> Focused message</span>
+              <span className="feature-chip"><ShieldCheck size={14}/> Clear next step</span>
+              <span className="feature-chip"><TrendingUp size={14}/> Learn as you go</span>
+            </div>
+            <Link href="/signup" className="cinematic-button cinematic-button-primary mt-9 inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold">Build your first experiment <ArrowRight size={16}/></Link>
+          </div>
+          <ValidationPreview />
+        </div>
+      </section>
+    </ScrollReveal>
+
     <section id="workflow" className="workflow-section mx-auto max-w-7xl px-6 py-24 lg:px-10 lg:py-32">
       <div className="section-label"><span/> THE SIGNAL LOOP</div>
       <div className="mt-5 grid gap-8 md:grid-cols-[.9fr_1.1fr] md:items-end">
@@ -70,7 +104,7 @@ export default function Home() {
           {n:"03",title:"Learn",desc:"Collect interest, review the signal, and decide what to improve before committing to a full build.",icon:TrendingUp,detail:"Let evidence guide you"},
         ].map((item)=><article key={item.n} className="workflow-card group relative overflow-hidden rounded-2xl p-6 sm:p-7">
           <div className="workflow-card-glow"/>
-          <div className="relative flex items-center justify-between"><span className="workflow-number">{item.n}</span><item.icon className="workflow-icon" size={19}/></div>
+          <div className="relative flex items-center justify-between"><span className="workflow-number">{item.n}</span><span className={"workflow-icon-wrap workflow-icon-wrap-" + item.n}><item.icon className="workflow-icon" size={20}/></span></div>
           <h3 className="relative mt-10 text-xl font-semibold tracking-tight text-white">{item.title}</h3><p className="relative mt-3 min-h-[72px] text-sm leading-6 text-white/48">{item.desc}</p>
           <div className="relative mt-7 flex items-center gap-2 border-t border-white/[.08] pt-4 text-xs font-medium text-white/65">{item.detail}<ArrowUpRight size={14} className="workflow-arrow ml-auto"/></div>
         </article>)}
