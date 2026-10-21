@@ -1,6 +1,13 @@
 import Link from "next/link";
 import { ArrowDownRight, ArrowRight, ArrowUpRight, Check, CircleDot, Compass, Layers3, ShieldCheck, Sparkles, Target, TrendingUp } from "lucide-react";
 import { LandingDemo } from "@/components/landing-demo";
+import { ScrollReveal } from "@/components/scroll-reveal";
+import { SignalLab } from "@/components/signal-lab";
+import { ValidationPreview } from "@/components/validation-preview";
+import { PremiumCursor } from "@/components/premium-cursor";
+import { CinematicNav } from "@/components/cinematic-nav";
+import { LiveSignalDashboard } from "@/components/live-signal-dashboard";
+import { IdeaCanvas } from "@/components/idea-canvas";
 
 const pillars = [
   { n: "01", icon: Compass, title: "Find a sharper idea", desc: "Start with your skills, interests, and constraints—not another generic list of startup ideas.", tag: "Discover" },
@@ -10,20 +17,9 @@ const pillars = [
 
 export default function Home() {
   return <main className="cinematic-home overflow-hidden">
-    <nav className="cinematic-nav mx-auto flex max-w-7xl items-center justify-between px-4 py-3 lg:px-8">
-      <Link href="/" className="brand-lockup flex items-center gap-3 font-semibold tracking-tight">
-        <span className="brand-mark grid h-9 w-9 place-items-center rounded-xl"><CircleDot size={19}/></span>
-        <span className="text-[15px]">signalboard<span className="brand-period">.</span></span>
-      </Link>
-      <div className="hidden items-center gap-8 text-sm text-white/55 md:flex">
-        <a className="nav-link" href="#workflow">How it works</a>
-        <a className="nav-link" href="#principles">Why SignalBoard</a>
-      </div>
-      <div className="flex items-center gap-3">
-        <Link href="/login" className="rounded-full px-4 py-2.5 text-sm text-white/70 transition hover:text-white">Log in</Link>
-        <Link href="/signup" className="cinematic-button cinematic-button-primary inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold sm:px-5">Start exploring <ArrowUpRight size={15}/></Link>
-      </div>
-    </nav>
+    <PremiumCursor />
+    <CinematicNav />
+
 
     <section className="cinematic-hero relative mx-auto grid max-w-7xl items-center gap-14 px-6 pb-24 pt-14 lg:grid-cols-[.94fr_1.06fr] lg:px-10 lg:pb-32 lg:pt-20">
       <div className="hero-orb hero-orb-one pointer-events-none absolute -left-56 top-0 h-[520px] w-[520px] rounded-full"/>
@@ -48,6 +44,7 @@ export default function Home() {
       </div>
     </section>
 
+    <ScrollReveal>
     <section id="principles" className="principles-band border-y border-white/[.08]">
       <div className="mx-auto grid max-w-7xl gap-6 px-6 py-8 sm:grid-cols-3 lg:px-10">
         {pillars.map((item) => <article key={item.n} className="principle-item group flex items-start gap-4 rounded-2xl p-3">
@@ -56,7 +53,62 @@ export default function Home() {
         </article>)}
       </div>
     </section>
+    </ScrollReveal>
 
+    <ScrollReveal>
+      <section id="idea-lab" className="signal-lab-section relative mx-auto max-w-7xl overflow-hidden px-6 py-24 lg:px-10 lg:py-32">
+        <div className="section-label"><span/> FROM CURIOSITY TO CLARITY</div>
+        <div className="mt-5 grid gap-8 md:grid-cols-[.82fr_1.18fr] md:items-end">
+          <h2 className="section-heading max-w-xl text-3xl font-semibold tracking-[-.055em] sm:text-5xl">Your next idea<br/><span className="luminous-type">is closer than you think.</span></h2>
+          <p className="max-w-xl text-sm leading-7 text-white/70 md:justify-self-end md:text-base">Explore a few directions, see how they connect to your strengths, and choose a promising thread to pull. This interactive sample shows the kind of focused discovery SignalBoard is built for.</p>
+        </div>
+        <div className="mt-12"><SignalLab /></div>
+      </section>
+    </ScrollReveal>
+
+    <ScrollReveal>
+      <section id="idea-canvas" className="idea-canvas-section mx-auto max-w-7xl px-6 py-20 lg:px-10 lg:py-28">
+        <div className="section-label"><span/> SHAPE THE POSSIBILITY</div>
+        <div className="mt-5 grid gap-8 md:grid-cols-[.82fr_1.18fr] md:items-end">
+          <h2 className="section-heading max-w-xl text-3xl font-semibold tracking-[-.055em] sm:text-5xl">From a hunch<br/><span className="luminous-type">to a testable idea.</span></h2>
+          <p className="max-w-xl text-sm leading-7 text-white/70 md:justify-self-end md:text-base">Choose who you want to help and what you want to improve. This tiny canvas will shape a starting hypothesis and the first question worth testing—without pretending a guess is market proof.</p>
+        </div>
+        <div className="mt-10"><IdeaCanvas /></div>
+      </section>
+    </ScrollReveal>
+
+    <ScrollReveal>
+      <section id="validation-preview" className="validation-section relative mx-auto max-w-7xl px-6 py-20 lg:px-10 lg:py-28">
+        <div className="validation-backdrop pointer-events-none absolute inset-x-6 top-8 bottom-8 rounded-[32px] lg:inset-x-10"/>
+        <div className="relative grid items-center gap-12 rounded-[32px] border border-white/[.1] px-6 py-10 sm:px-10 lg:grid-cols-[.9fr_1.1fr] lg:px-14 lg:py-14">
+          <div>
+            <div className="section-label"><span/> MAKE IT REAL</div>
+            <h2 className="mt-5 max-w-xl text-3xl font-semibold leading-tight tracking-[-.055em] text-white sm:text-5xl">Don’t just describe it.<br/><span className="text-cyan-200">Put it to the test.</span></h2>
+            <p className="mt-5 max-w-lg text-sm leading-7 text-white/70 sm:text-base">Shape a clear promise, give people one meaningful next step, and learn from the response. Explore this miniature landing-page concept and switch between its preview and signal view.</p>
+            <div className="mt-7 flex flex-wrap gap-3">
+              <span className="feature-chip"><Sparkles size={14}/> Focused message</span>
+              <span className="feature-chip"><ShieldCheck size={14}/> Clear next step</span>
+              <span className="feature-chip"><TrendingUp size={14}/> Learn as you go</span>
+            </div>
+            <Link href="/signup" className="cinematic-button cinematic-button-primary mt-9 inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold">Build your first experiment <ArrowRight size={16}/></Link>
+          </div>
+          <ValidationPreview />
+        </div>
+      </section>
+    </ScrollReveal>
+
+    <ScrollReveal>
+      <section id="live-signals" className="live-signals-section mx-auto max-w-7xl px-6 py-20 lg:px-10 lg:py-28">
+        <div className="section-label"><span/> SEE THE SIGNAL, NOT JUST THE NOISE</div>
+        <div className="mt-5 grid gap-8 md:grid-cols-[.82fr_1.18fr] md:items-end">
+          <h2 className="section-heading max-w-xl text-3xl font-semibold tracking-[-.055em] sm:text-5xl">A little evidence<br/><span className="luminous-type">changes everything.</span></h2>
+          <p className="max-w-xl text-sm leading-7 text-white/70 md:justify-self-end md:text-base">Explore an illustrative signal dashboard. Switch time ranges, inspect different metrics, and see how a focused experiment can turn attention into a question you can actually answer.</p>
+        </div>
+        <div className="mt-10"><LiveSignalDashboard /></div>
+      </section>
+    </ScrollReveal>
+
+    <ScrollReveal>
     <section id="workflow" className="workflow-section mx-auto max-w-7xl px-6 py-24 lg:px-10 lg:py-32">
       <div className="section-label"><span/> THE SIGNAL LOOP</div>
       <div className="mt-5 grid gap-8 md:grid-cols-[.9fr_1.1fr] md:items-end">
@@ -70,13 +122,15 @@ export default function Home() {
           {n:"03",title:"Learn",desc:"Collect interest, review the signal, and decide what to improve before committing to a full build.",icon:TrendingUp,detail:"Let evidence guide you"},
         ].map((item)=><article key={item.n} className="workflow-card group relative overflow-hidden rounded-2xl p-6 sm:p-7">
           <div className="workflow-card-glow"/>
-          <div className="relative flex items-center justify-between"><span className="workflow-number">{item.n}</span><item.icon className="workflow-icon" size={19}/></div>
+          <div className="relative flex items-center justify-between"><span className="workflow-number">{item.n}</span><span className={"workflow-icon-wrap workflow-icon-wrap-" + item.n}><item.icon className="workflow-icon" size={20}/></span></div>
           <h3 className="relative mt-10 text-xl font-semibold tracking-tight text-white">{item.title}</h3><p className="relative mt-3 min-h-[72px] text-sm leading-6 text-white/48">{item.desc}</p>
           <div className="relative mt-7 flex items-center gap-2 border-t border-white/[.08] pt-4 text-xs font-medium text-white/65">{item.detail}<ArrowUpRight size={14} className="workflow-arrow ml-auto"/></div>
         </article>)}
       </div>
     </section>
+    </ScrollReveal>
 
+    <ScrollReveal>
     <section className="px-6 pb-24 lg:px-10">
       <div className="final-cta relative mx-auto max-w-7xl overflow-hidden rounded-[28px] px-7 py-12 sm:px-12 sm:py-16">
         <div className="cta-grid absolute inset-0"/>
@@ -87,6 +141,7 @@ export default function Home() {
         </div>
       </div>
     </section>
+    </ScrollReveal>
     <footer className="cinematic-footer mx-auto flex max-w-7xl flex-col gap-4 border-t border-white/[.08] px-6 py-7 text-xs text-white/40 sm:flex-row sm:items-center sm:justify-between lg:px-10"><Link href="/" className="flex items-center gap-2 font-semibold text-white/75"><CircleDot size={16}/> signalboard<span className="brand-period">.</span></Link><span>Build with curiosity. Validate with evidence.</span><div className="flex gap-5"><Link href="/login">Log in</Link><Link href="/signup">Create account</Link></div></footer>
   </main>;
 }
