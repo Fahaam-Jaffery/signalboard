@@ -55,10 +55,24 @@ export function CinematicNav() {
   }, []);
 
   useEffect(() => {
-    if (commandOpen) {
-      setQuery("");
-      window.setTimeout(() => document.getElementById("signalboard-command-search")?.focus(), 30);
-    }
+    if (!commandOpen) return;
+    setQuery("");
+    const root = document.documentElement;
+    const body = document.body;
+    const previousRootOverflow = root.style.overflow;
+    const previousBodyOverflow = body.style.overflow;
+    const previousBodyPaddingRight = body.style.paddingRight;
+    const scrollbarWidth = window.innerWidth - root.clientWidth;
+    root.style.overflow = "hidden";
+    body.style.overflow = "hidden";
+    if (scrollbarWidth > 0) body.style.paddingRight = `${scrollbarWidth}px`;
+    const focusTimer = window.setTimeout(() => document.getElementById("signalboard-command-search")?.focus(), 30);
+    return () => {
+      window.clearTimeout(focusTimer);
+      root.style.overflow = previousRootOverflow;
+      body.style.overflow = previousBodyOverflow;
+      body.style.paddingRight = previousBodyPaddingRight;
+    };
   }, [commandOpen]);
 
   const closeAll = () => { setMenuOpen(false); setMobileOpen(false); setCommandOpen(false); };
