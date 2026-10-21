@@ -84,7 +84,7 @@ export function CinematicNav() {
       <div className="flex items-center gap-2 sm:gap-3">
         <button type="button" onClick={() => setCommandOpen(true)} className="nav-search-button hidden sm:inline-flex" aria-label="Open quick search"><Search size={14}/><span>Quick search</span><kbd><Command size={10}/> K</kbd></button>
         <Link href="/login" className="nav-login rounded-full px-3 py-2.5 text-sm text-white/70 transition hover:text-white sm:px-4">Log in</Link>
-        <Link href="/signup" className="cinematic-button cinematic-button-primary inline-flex items-center gap-2 rounded-full px-3 py-2.5 text-sm font-semibold sm:px-5">Start exploring <ArrowUpRight size={15}/></Link>
+        <Link href="/signup" className="cinematic-button cinematic-button-primary inline-flex items-center gap-2 rounded-full px-3 py-2.5 text-sm font-semibold sm:px-5"><span className="nav-cta-label">Start exploring</span> <ArrowUpRight size={15}/></Link>
         <button type="button" onClick={() => setMobileOpen(value => !value)} aria-label={mobileOpen ? "Close navigation" : "Open navigation"} aria-expanded={mobileOpen} className="nav-mobile-trigger md:hidden">{mobileOpen ? <X size={18}/> : <Menu size={18}/>}</button>
       </div>
       {menuOpen && <div className="nav-mega-menu hidden md:block" onMouseEnter={() => setMenuOpen(true)}>
@@ -97,7 +97,7 @@ export function CinematicNav() {
       </div>}
     </nav>
     {mobileOpen && <div className="nav-mobile-sheet md:hidden">
-      <div className="mobile-sheet-top"><span className="section-label"><span/> NAVIGATION</span><button type="button" onClick={() => setCommandOpen(true)} className="nav-mobile-search"><Search size={14}/> Search destinations</button></div>
+      <div className="mobile-sheet-top"><span className="section-label"><span/> NAVIGATION</span><button type="button" onClick={() => {setMobileOpen(false);setCommandOpen(true)}} className="nav-mobile-search"><Search size={14}/> Search destinations</button></div>
       <div className="mobile-sheet-links">{destinations.map(item => {const Icon=item.icon;return <Link key={item.href} href={item.href} onClick={closeAll}><Icon size={17}/><span>{item.label}</span><ArrowUpRight size={14} className="ml-auto opacity-50"/></Link>})}</div>
       <div className="mobile-sheet-foot">Explore. Publish. Learn. <span>SignalBoard / 01</span></div>
     </div>}
