@@ -4,6 +4,7 @@ import { LandingDemo } from "@/components/landing-demo";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { SignalLab } from "@/components/signal-lab";
 import { ValidationPreview } from "@/components/validation-preview";
+import { PremiumCursor } from "@/components/premium-cursor";
 
 const pillars = [
   { n: "01", icon: Compass, title: "Find a sharper idea", desc: "Start with your skills, interests, and constraints—not another generic list of startup ideas.", tag: "Discover" },
@@ -13,6 +14,7 @@ const pillars = [
 
 export default function Home() {
   return <main className="cinematic-home overflow-hidden">
+    <PremiumCursor />
     <nav className="cinematic-nav mx-auto flex max-w-7xl items-center justify-between px-4 py-3 lg:px-8">
       <Link href="/" className="brand-lockup flex items-center gap-3 font-semibold tracking-tight">
         <span className="brand-mark grid h-9 w-9 place-items-center rounded-xl"><CircleDot size={19}/></span>
