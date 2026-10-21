@@ -296,3 +296,136 @@ button { -webkit-tap-highlight-color: transparent; }
 .signal-metric small { color:rgba(255,255,255,.62); font-size:10px; }
 @media (max-width:640px) { .signal-result,.validation-signal { min-height:unset; } .validation-page-art { height:120px; } }
 @media (prefers-reduced-motion:reduce) { .scroll-reveal { opacity:1 !important; transform:none !important; transition:none !important; } .workflow-icon,.signal-result,.signal-result-icon,.validation-art-orbit,.validation-art-star { animation:none !important; } .signal-choice:hover,.validation-join:hover { transform:none; } }
+
+
+/* Premium browsing finish: native smooth anchors, refined scrollbar, and a bespoke cursor. */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 88px;
+  scrollbar-width: thin;
+  scrollbar-color: #626b91 #090a10;
+}
+html, body { overscroll-behavior-x: none; }
+::-webkit-scrollbar { width: 11px; height: 11px; }
+::-webkit-scrollbar-track { background: #090a10; border-left: 1px solid rgba(255,255,255,.045); }
+::-webkit-scrollbar-thumb {
+  min-height: 48px;
+  border: 3px solid #090a10;
+  border-radius: 999px;
+  background: linear-gradient(180deg,#8b95ff 0%,#5e71d8 48%,#36b9d3 100%);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.14);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg,#b4baff 0%,#7f8dff 48%,#6de3f4 100%);
+}
+::-webkit-scrollbar-corner { background: #090a10; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+/* The custom cursor is only enabled for mouse/trackpad users; touch keeps native behavior. */
+@media (hover: hover) and (pointer: fine) {
+  .cinematic-home, .cinematic-home * { cursor: none !important; }
+  .premium-cursor, .premium-cursor-dot {
+    position: fixed;
+    z-index: 9999;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    opacity: 0;
+    will-change: transform, opacity;
+  }
+  .premium-cursor {
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    transition: opacity .18s ease;
+  }
+  .premium-cursor.is-visible, .premium-cursor-dot.is-visible { opacity: 1; }
+  .premium-cursor-ring {
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(220,230,255,.8);
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 25%,rgba(157,224,255,.13),rgba(109,117,255,.045) 58%,rgba(255,255,255,.015));
+    box-shadow: 0 0 16px rgba(108,143,255,.13),inset 0 0 12px rgba(183,211,255,.06);
+    backdrop-filter: blur(1.5px);
+    transition: width .24s cubic-bezier(.2,.7,.2,1),height .24s cubic-bezier(.2,.7,.2,1),border-color .24s ease,background .24s ease,box-shadow .24s ease,transform .18s ease;
+  }
+  .premium-cursor-aura {
+    position: absolute;
+    inset: -10px;
+    border-radius: 50%;
+    background: radial-gradient(circle,rgba(111,131,255,.13),transparent 70%);
+    opacity: .7;
+    transition: opacity .2s ease,transform .2s ease;
+  }
+  .premium-cursor-dot {
+    width: 4px;
+    height: 4px;
+    margin: -2px 0 0 -2px;
+    border-radius: 50%;
+    background: #f4fbff;
+    box-shadow: 0 0 9px rgba(166,226,255,.9),0 0 20px rgba(119,133,255,.5);
+    transition: opacity .18s ease,scale .2s ease;
+  }
+  .premium-cursor.is-hovering .premium-cursor-ring {
+    width: 54px;
+    height: 54px;
+    border-color: rgba(158,226,255,.95);
+    background: radial-gradient(circle at 30% 25%,rgba(100,222,255,.2),rgba(116,104,255,.12) 65%,rgba(255,255,255,.04));
+    box-shadow: 0 0 24px rgba(93,174,255,.2),inset 0 0 14px rgba(190,224,255,.1);
+  }
+  .premium-cursor.is-hovering .premium-cursor-aura { opacity: 1; transform: scale(1.12); }
+  .premium-cursor.is-pressed .premium-cursor-ring { transform: scale(.84); }
+  .premium-cursor.is-still .premium-cursor-ring { transition: none; }
+}
+@media (hover: none), (pointer: coarse) {
+  .premium-cursor, .premium-cursor-dot { display: none !important; }
+}
+
+/* Each active Idea Lab selection now inherits its own signature accent. */
+.signal-choice.is-active-violet {
+  border-color: rgba(173,153,255,.7);
+  background: linear-gradient(112deg,rgba(133,99,255,.24),rgba(93,105,255,.11) 54%,rgba(255,255,255,.035));
+  box-shadow: inset 0 1px rgba(255,255,255,.11),0 10px 34px rgba(124,89,255,.16),0 0 0 1px rgba(160,137,255,.06);
+}
+.signal-choice.is-active-violet .signal-choice-icon {
+  color: #e1d5ff;
+  border-color: rgba(190,164,255,.48);
+  background: linear-gradient(145deg,rgba(147,104,255,.32),rgba(109,83,220,.16));
+  box-shadow: 0 0 22px rgba(149,107,255,.16),inset 0 1px rgba(255,255,255,.14);
+}
+.signal-choice.is-active-violet .signal-choice-index { color: #d5c4ff; }
+.signal-choice.is-active-pink {
+  border-color: rgba(255,135,207,.68);
+  background: linear-gradient(112deg,rgba(255,74,174,.2),rgba(211,62,156,.1) 54%,rgba(255,255,255,.035));
+  box-shadow: inset 0 1px rgba(255,255,255,.11),0 10px 34px rgba(255,65,174,.13),0 0 0 1px rgba(255,126,202,.05);
+}
+.signal-choice.is-active-pink .signal-choice-icon {
+  color: #ffd1ed;
+  border-color: rgba(255,147,213,.5);
+  background: linear-gradient(145deg,rgba(255,87,184,.3),rgba(204,61,145,.15));
+  box-shadow: 0 0 22px rgba(255,83,186,.15),inset 0 1px rgba(255,255,255,.14);
+}
+.signal-choice.is-active-pink .signal-choice-index { color: #ffc0e5; }
+.signal-choice.is-active-cyan {
+  border-color: rgba(96,224,255,.68);
+  background: linear-gradient(112deg,rgba(20,195,255,.2),rgba(49,128,237,.1) 54%,rgba(255,255,255,.035));
+  box-shadow: inset 0 1px rgba(255,255,255,.11),0 10px 34px rgba(20,190,255,.13),0 0 0 1px rgba(91,224,255,.05);
+}
+.signal-choice.is-active-cyan .signal-choice-icon {
+  color: #c2f7ff;
+  border-color: rgba(104,232,255,.5);
+  background: linear-gradient(145deg,rgba(21,205,255,.29),rgba(43,139,235,.15));
+  box-shadow: 0 0 22px rgba(35,207,255,.16),inset 0 1px rgba(255,255,255,.14);
+}
+.signal-choice.is-active-cyan .signal-choice-index { color: #a8f1ff; }
+.signal-choice.is-active-violet .signal-choice-icon svg,
+.signal-choice.is-active-pink .signal-choice-icon svg,
+.signal-choice.is-active-cyan .signal-choice-icon svg { filter: drop-shadow(0 0 7px currentColor); }
+@media (prefers-reduced-motion: reduce) {
+  .premium-cursor-ring,.premium-cursor-aura,.premium-cursor-dot { transition: none !important; }
+  .signal-choice { transition: none !important; }
+}
