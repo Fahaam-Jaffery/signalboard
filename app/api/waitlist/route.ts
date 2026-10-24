@@ -31,6 +31,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true, message: "If the address can receive mail, a confirmation link will arrive shortly." });
   }
 
+  if (!process.env.WAITLIST_COOKIE_SECRET || process.env.WAITLIST_COOKIE_SECRET.length < 32) {
+    return NextResponse.json({ error: "Waitlist verification is not configured. Please try again later." }, { status: 503 });
+  }
+  const apiKey = process.env.RESEND_API_KEY;
+  const from = process.env.WAITLIST_EMAIL_FROM;
+  if (!apiKey || !from) {
+    return NextResponse.json({ error: "Email confirmation is temporarily unavailable. Please try again later." }, { status: 503 });
+  }
+
   const slug = typeof body.slug === "string" ? body.slug.trim() : "";
   const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
   if (!slug || slug.length > 180 || !validEmail(email)) {
@@ -98,13 +107,6 @@ export async function POST(request: Request) {
       const response = NextResponse.json({ success: true, status: "verified", message: "You're already confirmed on this list. Thanks for your interest!" });
       setMembershipCookie(response, slug, data.signup_id, data.page_id);
       return response;
-    }
-
-    const apiKey = process.env.RESEND_API_KEY;
-    const from = process.env.WAITLIST_EMAIL_FROM;
-    if (!apiKey || !from) {
-      console.error("Waitlist email delivery is not configured (RESEND_API_KEY / WAITLIST_EMAIL_FROM).");
-      return NextResponse.json({ error: "Email confirmation is temporarily unavailable. Please try again later." }, { status: 503 });
     }
 
     const verifyUrl = new URL("/api/waitlist/verify", siteOrigin(request));
