@@ -54,16 +54,44 @@ export default async function ValidationResultsPage() {
   let signupError = false;
 
   if (pages.length) {
-    const { data, error } = await supabase
+    const pageIds = pages.map((page) => page.id);
+    const resultWithStatus = await supabase
       .from("waitlist")
       .select("id,landing_page_id,created_at,verification_status")
-      .in("landing_page_id", pages.map((page) => page.id))
+      .in("landing_page_id", pageIds)
       .order("created_at", { ascending: false });
-    const allSignups = (data || []) as SignupRow[];
-    signups = allSignups.filter((signup) => signup.verification_status === "verified");
-    pendingSignups = allSignups.filter((signup) => signup.verification_status === "pending").length;
-    legacySignups = allSignups.filter((signup) => signup.verification_status === "legacy" || signup.verification_status === "flagged").length;
-    signupError = Boolean(error);
+
+    if (!resultWithStatus.error) {
+      const allSignups = (resultWithStatus.data || []) as SignupRow[];
+      signups = allSignups.filter((signup) => signup.verification_status === "verified");
+      pendingSignups = allSignups.filter((signup) => signup.verification_status === "pending").length;
+      legacySignups = allSignups.filter((signup) => signup.verification_status === "legacy" || signup.verification_status === "flagged").length;
+    } else {
+      // The auth-based waitlist migration may not have been applied yet.
+      // Fall back only when the missing verification_status column is the cause.
+      const missingStatusColumn =
+        resultWithStatus.error.code === "42703" ||
+        resultWithStatus.error.code === "PGRST204" ||
+        /verification_status.*(column|schema cache)|column.*verification_status/i.test(resultWithStatus.error.message);
+
+      if (missingStatusColumn) {
+        const legacyResult = await supabase
+          .from("waitlist")
+          .select("id,landing_page_id,created_at")
+          .in("landing_page_id", pageIds)
+          .order("created_at", { ascending: false });
+
+        if (legacyResult.error) {
+          signupError = true;
+        } else {
+          // Do not mislabel pre-migration rows as verified. Preserve and show them as legacy.
+          const legacyRows = legacyResult.data || [];
+          legacySignups = legacyRows.length;
+        }
+      } else {
+        signupError = true;
+      }
+    }
   }
 
   const counts = new Map<string, number>();
