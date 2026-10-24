@@ -21,6 +21,7 @@ type SignupRow = {
   id: string;
   landing_page_id: string;
   created_at: string;
+  verification_status: "legacy" | "pending" | "verified" | "flagged";
 };
 
 function dateKey(date: Date) {
@@ -48,15 +49,20 @@ export default async function ValidationResultsPage() {
 
   const pages = (pageData || []) as PageRow[];
   let signups: SignupRow[] = [];
+  let pendingSignups = 0;
+  let legacySignups = 0;
   let signupError = false;
 
   if (pages.length) {
     const { data, error } = await supabase
       .from("waitlist")
-      .select("id,landing_page_id,created_at")
+      .select("id,landing_page_id,created_at,verification_status")
       .in("landing_page_id", pages.map((page) => page.id))
       .order("created_at", { ascending: false });
-    signups = (data || []) as SignupRow[];
+    const allSignups = (data || []) as SignupRow[];
+    signups = allSignups.filter((signup) => signup.verification_status === "verified");
+    pendingSignups = allSignups.filter((signup) => signup.verification_status === "pending").length;
+    legacySignups = allSignups.filter((signup) => signup.verification_status === "legacy" || signup.verification_status === "flagged").length;
     signupError = Boolean(error);
   }
 
@@ -112,16 +118,18 @@ export default async function ValidationResultsPage() {
         {pagesError && <div role="alert" className="mt-5 rounded-xl border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-600">We couldn’t load your experiments. Please refresh and try again.</div>}
         {signupError && <div role="alert" className="mt-5 rounded-xl border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-600">Experiment details loaded, but signup results couldn’t be loaded. Please refresh to retry.</div>}
 
+        {legacySignups > 0 && <div className="mt-5 rounded-xl border border-amber-500/20 bg-amber-500/[.06] px-4 py-3 text-xs leading-5 muted">{legacySignups} earlier waitlist record{legacySignups === 1 ? " is" : "s are"} preserved as legacy/unverified and excluded from confirmed metrics. They are not deleted or silently treated as verified.</div>}
+
         <section className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <article className="surface p-5">
-            <div className="flex items-center justify-between gap-3"><span className="text-xs font-medium muted">Waitlist signups</span><span className="grid h-10 w-10 place-items-center rounded-xl bg-violet-500/10 text-violet-600"><Users size={18} /></span></div>
+            <div className="flex items-center justify-between gap-3"><span className="text-xs font-medium muted">Verified signups</span><span className="grid h-10 w-10 place-items-center rounded-xl bg-violet-500/10 text-violet-600"><Users size={18} /></span></div>
             <div className="mt-5 text-3xl font-semibold tracking-tight">{signups.length}</div>
-            <p className="mt-1 text-[10px] muted">Recorded across your experiments</p>
+            <p className="mt-1 text-[10px] muted">Inbox confirmed · trusted signup count</p>
           </article>
           <article className="surface p-5">
-            <div className="flex items-center justify-between gap-3"><span className="text-xs font-medium muted">Last 7 days</span><span className="grid h-10 w-10 place-items-center rounded-xl bg-cyan-500/10 text-cyan-600"><TrendingUp size={18} /></span></div>
-            <div className="mt-5 text-3xl font-semibold tracking-tight">{last7}</div>
-            <p className="mt-1 text-[10px] muted">New signups in the last week</p>
+            <div className="flex items-center justify-between gap-3"><span className="text-xs font-medium muted">Pending confirmation</span><span className="grid h-10 w-10 place-items-center rounded-xl bg-cyan-500/10 text-cyan-600"><TrendingUp size={18} /></span></div>
+            <div className="mt-5 text-3xl font-semibold tracking-tight">{pendingSignups}</div>
+            <p className="mt-1 text-[10px] muted">Not counted as confirmed interest</p>
           </article>
           <article className="surface p-5">
             <div className="flex items-center justify-between gap-3"><span className="text-xs font-medium muted">Published experiments</span><span className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-500/10 text-emerald-600"><FlaskConical size={18} /></span></div>
@@ -138,7 +146,7 @@ export default async function ValidationResultsPage() {
         <section className="mt-6 grid items-start gap-6 xl:grid-cols-[1.2fr_.8fr]">
           <article className="surface overflow-hidden">
             <div className="border-b border-[rgb(var(--border))] px-5 py-5 sm:px-6">
-              <div className="flex items-center justify-between gap-3"><div><h2 className="font-semibold">Signup activity</h2><p className="mt-1 text-xs muted">Daily waitlist submissions · last 14 days</p></div><span className="rounded-full border border-[rgb(var(--border))] px-2.5 py-1 text-[10px] muted">Actual data</span></div>
+              <div className="flex items-center justify-between gap-3"><div><h2 className="font-semibold">Signup activity</h2><p className="mt-1 text-xs muted">Daily confirmed signups · last 14 days</p></div><span className="rounded-full border border-[rgb(var(--border))] px-2.5 py-1 text-[10px] muted">Actual data</span></div>
             </div>
             <div className="p-5 sm:p-6">
               <div className="flex h-44 items-end gap-1.5 sm:gap-2" role="img" aria-label={"Daily waitlist signups for the last 14 days. Total: " + days.reduce((sum, day) => sum + day.count, 0)}>
@@ -183,7 +191,7 @@ export default async function ValidationResultsPage() {
           )}
         </section>
 
-        <p className="mt-5 text-[10px] leading-5 muted">Data is scoped to your account using Supabase row-level security. Counts reflect stored waitlist records; no visitor or conversion data is inferred.</p>
+        <p className="mt-5 text-[10px] leading-5 muted">Data is scoped to your account. Confirmed counts include only email-verified signups; pending and legacy records are excluded. Email verification proves inbox access, not a unique human or product-market fit. No visitor or conversion data is inferred.</p>
       </div>
     </main>
   );
