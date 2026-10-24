@@ -44,6 +44,20 @@ export async function POST(request: Request) {
   });
 
   if (error?.code === "23505") {
+    // Older waitlist rows were keyed by email before memberships were tied to accounts.
+    // If this confirmed account matches such a row, claim it rather than leaving it invisible
+    // to the member and excluded from verified validation metrics.
+    await supabase
+      .from("waitlist")
+      .update({
+        user_id: user.id,
+        verification_status: "verified",
+        verified_at: new Date().toISOString(),
+      })
+      .eq("landing_page_id", page.id)
+      .eq("email", user.email.trim().toLowerCase())
+      .is("user_id", null);
+
     return NextResponse.json({
       success: true,
       alreadyJoined: true,
