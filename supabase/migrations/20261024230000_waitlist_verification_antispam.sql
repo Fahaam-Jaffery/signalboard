@@ -104,9 +104,30 @@ begin
   end if;
 
   if v_signup_id is null then
-    insert into public.waitlist(landing_page_id, email, verification_status, verification_requested_at)
-    values (v_page_id, lower(trim(p_email)), 'pending', now())
-    returning id into v_signup_id;
+    -- Handle simultaneous first submissions without leaking a unique-constraint error.
+    begin
+      insert into public.waitlist(landing_page_id, email, verification_status, verification_requested_at)
+      values (v_page_id, lower(trim(p_email)), 'pending', now())
+      returning id into v_signup_id;
+    exception when unique_violation then
+      select id, verification_status into v_signup_id, v_status
+      from public.waitlist
+      where landing_page_id = v_page_id and lower(email) = lower(trim(p_email))
+      limit 1
+      for update;
+      if v_signup_id is null then
+        raise;
+      end if;
+      if v_status = 'verified' then
+        return jsonb_build_object('ok', true, 'status', 'verified', 'signup_id', v_signup_id, 'page_id', v_page_id);
+      end if;
+      update public.waitlist
+        set email = lower(trim(p_email)),
+            verification_status = 'pending',
+            verified_at = null,
+            verification_requested_at = now()
+      where id = v_signup_id;
+    end;
   else
     update public.waitlist
       set email = lower(trim(p_email)),
