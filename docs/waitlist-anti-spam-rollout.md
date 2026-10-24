@@ -1,60 +1,35 @@
-# Waitlist anti-spam rollout
+# Waitlist authentication rollout
 
 ## What this change does
 
-- New submissions are **pending** until the visitor explicitly confirms a one-time email link.
-- Only **verified** signups count in the validation dashboard's headline totals and time series.
-- Existing records are preserved as `legacy` and excluded from confirmed metrics; they are never silently upgraded to verified.
-- Email addresses are trimmed/lowercased and protected by a database-enforced case-insensitive, per-page unique index.
-- Database-backed limits request a Turnstile challenge after 5 requests per IP key or 2 per email key per hour, then hard-limit at 12 per IP key or 5 per email key per hour.
-- A hidden honeypot catches simple bots.
-- A signed, HttpOnly, SameSite=Lax cookie remembers pending/verified membership on refresh without putting an email address in the cookie.
-- Verification tokens are stored as hashes, expire after 30 minutes, and are single-use. The email-link GET is side-effect-free so common email link scanners do not automatically verify a signup.
+- Visitors must sign in or create a SignalBoard account before joining a public waitlist.
+- The account's email must be confirmed by Supabase Auth. No separate Resend account, waitlist email, token, or purchased domain is required.
+- Every new subscription is linked to `auth.users.id`; the email comes from the authenticated Supabase user, never from a form field.
+- A database unique index allows one subscription per authenticated user per landing page. Refreshing, signing out and back in, or opening the page again cannot create a second subscription.
+- Row Level Security rejects anonymous inserts, unconfirmed accounts, mismatched email identities, and subscriptions to unpublished pages.
+- Existing waitlist rows are preserved. Migration links a legacy row only when its email matches a Supabase account whose email is already confirmed; other historical rows remain legacy/unlinked.
+- Validation Results counts only confirmed-account subscriptions as verified interest. Existing legacy rows remain excluded unless safely linked by the migration.
+- Existing authentication, page CRUD, publishing, Product Studio, and homepage are otherwise unchanged.
 
-## Required environment configuration
+## Environment configuration
 
-Set these **server-side** variables in Vercel (Preview and Production as appropriate) and local `.env.local`:
+This approach removes the waitlist-specific environment requirements for Resend, `WAITLIST_COOKIE_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`, and Turnstile. It uses the existing public Supabase URL/key and existing Supabase Auth email-confirmation setup.
 
-- `SUPABASE_SERVICE_ROLE_KEY`: Supabase Project Settings → API keys → service_role/secret key. Never prefix this with `NEXT_PUBLIC_`; never commit it.
-- `WAITLIST_COOKIE_SECRET`: a private random secret of at least 32 characters. Keep the same value across deployments so existing membership cookies remain valid.
-- `RESEND_API_KEY`: API key from Resend.
-- `WAITLIST_EMAIL_FROM`: sender identity on a domain verified with Resend, for example `SignalBoard <waitlist@your-verified-domain.com>`.
-- Optional adaptive challenge: `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY` from Cloudflare Turnstile. Configure both to challenge higher-risk traffic; without both keys, requests are still rate-limited but no interactive challenge is shown.
-- `NEXT_PUBLIC_SITE_URL`: exact public origin used in confirmation links, with no trailing slash (for production, `https://signalsboard.vercel.app`).
+For production, configure Supabase Auth's Site URL and redirect URLs to include your free Vercel origin, `https://signalsboard.vercel.app`, and the local development origin you use. Supabase's built-in email service may be rate-limited for public usage; that is separate from the waitlist logic and does not require Resend for local development.
 
-Resend currently advertises a $0 transactional-email tier with 3,000 emails/month and a 100/day limit. Sending from a production sender generally requires a domain you control and have verified. Check the provider's current terms before launch: https://www.resend.com/pricing?product=transactional
+## Database migration — review before applying
 
-## Database migration — manual approval required
+Migration: `supabase/migrations/20261024230000_waitlist_verification_antispam.sql`
 
-The migration is `supabase/migrations/20261024230000_waitlist_verification_antispam.sql`. It has **not** been applied to the connected production Supabase database by this change. Review it, then apply it to the intended environment before enabling the new route. It creates private token/rate-limit tables and service-role-only RPCs.
+The migration has not been applied to the connected production Supabase project by this PR. Review and apply it only after preview testing and explicit approval. It preserves rows, adds an optional authenticated user link, replaces anonymous insert access with confirmed-authenticated insert rules, and creates a unique user/page index.
 
-A read-only preflight on the connected database found no current case-insensitive duplicate pairs, so the new unique index should not collide with the current rows. Re-run the duplicate check immediately before applying the migration if new submissions can arrive in the meantime:
+## Smoke-test checklist
 
-```sql
-select landing_page_id, lower(email) as normalized_email, count(*)
-from public.waitlist
-group by landing_page_id, lower(email)
-having count(*) > 1;
-```
-
-After migration, old rows remain `legacy`. A legacy address is moved to `pending` only when that person requests a new confirmation link. Do not run any backfill that marks existing rows verified.
-
-## Review / smoke-test checklist
-
-1. Invalid syntax is rejected; mixed-case variants for the same page cannot create two rows.
-2. Submitting a real address shows the pending message and sends one confirmation email.
-3. The row is not counted as verified until the user submits the confirmation form in the email.
-4. Opening the link in a mail scanner / HTTP GET alone does not verify the row.
-5. A confirmation link expires after 30 minutes; a consumed token cannot be reused.
-6. Refreshing the page preserves the pending/verified state in the same browser; another device requires the email link.
-7. Repeated submissions hit the rate limits; a non-empty honeypot is never persisted.
-8. Pending and legacy records are excluded from verified totals; per-page counts and charts use only verified rows.
-9. Published page, auth, Product Studio, page edit/update/delete, and existing homepage flows remain unchanged.
-10. Check provider logs for delivery failures and configure a verified sender before production testing.
-
-## Known limitations / next hardening pass
-
-- Email confirmation proves access to an inbox at that moment, not that the person is unique, human, or a qualified customer.
-- MX/DNS checks cannot prove a specific mailbox exists and are not used as a false-positive-prone gate.
-- Turnstile is optional until both Cloudflare keys are configured. With both keys present, higher-risk traffic is challenged; do not treat the honeypot alone as enterprise bot protection.
-- Delivery/bounce webhooks, disposable-domain intelligence, and automated pruning/retention are follow-up work. Do not represent a pending or legacy row as verified.
+1. Signed-out visitor sees sign-in and create-account actions that return to the same public page.
+2. A signed-in but unconfirmed account cannot join.
+3. A confirmed account joins successfully; the email is sourced from Supabase Auth.
+4. Refreshing the page shows the joined state from the database.
+5. Submitting again or joining from another tab/device reports already joined and creates no duplicate row.
+6. Anonymous insert attempts and inserts for unpublished pages are rejected by RLS.
+7. Existing legacy waitlist rows remain present; only records linked to confirmed accounts count as verified.
+8. Auth, dashboard, Product Studio, publish/edit/update/delete, and homepage flows still work.
