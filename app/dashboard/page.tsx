@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { Dashboard } from "@/components/dashboard";
-import { Blocks, ArrowRight } from "lucide-react";
+import { Blocks, ArrowRight, Activity } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Your dashboard",
@@ -49,9 +49,14 @@ export default async function DashboardPage() {
               <p className="mt-1 text-xs muted">Go beyond ideas. Plan, prototype, and prepare to launch your product.</p>
             </div>
           </div>
-          <Link href="/projects" className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-violet-600 px-4 py-2.5 text-xs font-semibold text-white">
-            Open product studio <ArrowRight size={14} />
-          </Link>
+          <div className="flex flex-wrap items-center gap-2">
+            <Link href="/dashboard/validation" className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-[rgb(var(--border))] px-4 py-2.5 text-xs font-semibold transition hover:border-violet-500/40 hover:text-violet-600">
+              <Activity size={14} /> Validation results
+            </Link>
+            <Link href="/projects" className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-violet-600 px-4 py-2.5 text-xs font-semibold text-white">
+              Open product studio <ArrowRight size={14} />
+            </Link>
+          </div>
         </div>
       </div>
       <Dashboard
