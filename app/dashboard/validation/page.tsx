@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Activity, ArrowLeft, ArrowRight, ExternalLink, FlaskConical, Users, TrendingUp } from "lucide-react";
+import { Activity, ArrowLeft, ArrowRight, ExternalLink, FlaskConical, Mail, Users } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
@@ -81,9 +81,6 @@ export default async function ValidationResultsPage() {
     const key = dateKey(date);
     return { key, date, count: signups.filter((signup) => dateKey(new Date(signup.created_at)) === key).length };
   });
-  const last7Start = new Date(today);
-  last7Start.setUTCDate(today.getUTCDate() - 6);
-  const last7 = signups.filter((signup) => new Date(signup.created_at) >= last7Start).length;
   const publishedCount = pages.filter((page) => page.status === "published").length;
   const peak = Math.max(1, ...days.map((day) => day.count));
   const leadingPage = pages.reduce<PageRow | null>((best, page) => {
@@ -127,7 +124,7 @@ export default async function ValidationResultsPage() {
             <p className="mt-1 text-[10px] muted">Inbox confirmed · trusted signup count</p>
           </article>
           <article className="surface p-5">
-            <div className="flex items-center justify-between gap-3"><span className="text-xs font-medium muted">Pending confirmation</span><span className="grid h-10 w-10 place-items-center rounded-xl bg-cyan-500/10 text-cyan-600"><TrendingUp size={18} /></span></div>
+            <div className="flex items-center justify-between gap-3"><span className="text-xs font-medium muted">Pending confirmation</span><span className="grid h-10 w-10 place-items-center rounded-xl bg-cyan-500/10 text-cyan-600"><Mail size={18} /></span></div>
             <div className="mt-5 text-3xl font-semibold tracking-tight">{pendingSignups}</div>
             <p className="mt-1 text-[10px] muted">Not counted as confirmed interest</p>
           </article>
