@@ -186,7 +186,7 @@ $$;
 revoke all on function public.begin_waitlist_verification(text, text, text, text, text, boolean) from public, anon, authenticated;
 revoke all on function public.verify_waitlist_email(text) from public, anon, authenticated;
 revoke all on function public.get_waitlist_membership_status(uuid, uuid) from public, anon, authenticated;
-grant execute on function public.begin_waitlist_verification(text, text, text, text, text) to service_role;
+grant execute on function public.begin_waitlist_verification(text, text, text, text, text, boolean) to service_role;
 grant execute on function public.verify_waitlist_email(text) to service_role;
 grant execute on function public.get_waitlist_membership_status(uuid, uuid) to service_role;
 
