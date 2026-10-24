@@ -1,1 +1,79 @@
-"use client";import {useState} from "react";import {ArrowRight,CheckCircle2,LoaderCircle,Mail} from "lucide-react";import {Button} from "@/components/ui/button";import {Input} from "@/components/ui/input";export function WaitlistForm({slug}:{slug:string}){const [email,setEmail]=useState("");const [loading,setLoading]=useState(false);const [result,setResult]=useState<{success:boolean;message:string}|null>(null);async function submit(e:React.FormEvent<HTMLFormElement>){e.preventDefault();setLoading(true);setResult(null);try{const response=await fetch("/api/waitlist",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({slug,email})});const data=await response.json();if(!response.ok)throw new Error(data.error||"Could not join waitlist.");setResult({success:true,message:data.message});setEmail("");}catch(e){setResult({success:false,message:e instanceof Error?e.message:"Please try again."});}finally{setLoading(false);}}if(result?.success)return <div role="status" className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-left"><div className="flex items-center gap-2 text-sm font-semibold text-emerald-800"><CheckCircle2 size={18}/>{result.message}</div></div>;return <form onSubmit={submit} className="flex flex-col gap-2 sm:flex-row"><div className="relative min-w-0 flex-1"><Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#9691a6]"/><Input type="email" required maxLength={254} autoComplete="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="Enter your email address" aria-label="Email address" className="h-12 border-[#e3deee] bg-white py-3.5 pl-11 pr-4 text-sm focus-visible:border-violet-400 focus-visible:ring-violet-500/10"/></div><Button type="submit" size="lg" disabled={loading} className="h-12 rounded-xl px-5">{loading?<LoaderCircle size={15} className="animate-spin"/>:<>Join waitlist <ArrowRight size={15}/></>}</Button>{result&&!result.success&&<p role="alert" className="text-left text-xs text-rose-600">{result.message}</p>}</form>}
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { ArrowRight, CheckCircle2, LoaderCircle, LockKeyhole } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+type MembershipStatus = "legacy" | "pending" | "verified" | "flagged" | null;
+
+export function WaitlistForm({
+  slug,
+  initialStatus = null,
+  isAuthenticated = false,
+  emailConfirmed = false,
+}: {
+  slug: string;
+  initialStatus?: MembershipStatus;
+  isAuthenticated?: boolean;
+  emailConfirmed?: boolean;
+}) {
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<{ success: boolean; message: string } | null>(
+    initialStatus
+      ? {
+          success: true,
+          message: initialStatus === "verified"
+            ? "You're already on this waitlist. Your spot is saved to your SignalBoard account."
+            : "We found an earlier signup for this page. If you used this email before, your original interest is preserved.",
+        }
+      : null,
+  );
+
+  async function submit() {
+    setLoading(true);
+    setResult(null);
+    try {
+      const response = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Could not join waitlist.");
+      setResult({ success: true, message: data.message });
+    } catch (error) {
+      setResult({ success: false, message: error instanceof Error ? error.message : "Please try again." });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  if (result?.success) {
+    return <div role="status" className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-left"><div className="flex items-center gap-2 text-sm font-semibold text-emerald-800"><CheckCircle2 size={18} />{result.message}</div></div>;
+  }
+
+  if (!isAuthenticated) {
+    const next = encodeURIComponent("/p/" + slug);
+    return <div className="rounded-2xl border border-[#e3deee] bg-white p-5 text-center">
+      <LockKeyhole size={19} className="mx-auto text-violet-600" />
+      <p className="mt-3 text-sm font-semibold text-[#211b35]">Sign in to save your spot</p>
+      <p className="mt-1 text-xs leading-5 text-[#777287]">Your SignalBoard account keeps your subscription saved, even after you refresh or return later.</p>
+      <div className="mt-4 flex flex-col justify-center gap-2 sm:flex-row">
+        <Link href={"/login?next=" + next} className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-violet-600 px-6 text-sm font-semibold text-white transition-colors hover:bg-violet-500">Sign in <ArrowRight size={15} /></Link>
+        <Link href={"/signup?next=" + next} className="inline-flex h-11 items-center justify-center rounded-xl border border-[#e3deee] bg-white px-6 text-sm font-semibold text-[#211b35] transition-colors hover:bg-[#f8f6ff]">Create account</Link>
+      </div>
+    </div>;
+  }
+
+  if (!emailConfirmed) {
+    return <div role="status" className="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-left"><p className="text-sm font-semibold text-amber-900">Confirm your SignalBoard email first</p><p className="mt-1 text-xs leading-5 text-amber-800">Open the confirmation email from Supabase, then return here and refresh to join this waitlist.</p></div>;
+  }
+
+  return <div className="space-y-3">
+    <Button type="button" size="lg" disabled={loading} onClick={submit} className="h-12 w-full rounded-xl">
+      {loading ? <LoaderCircle size={16} className="animate-spin" /> : <>Join waitlist <ArrowRight size={15} /></>}
+    </Button>
+    {result && !result.success && <p role="alert" className="text-left text-xs text-rose-600">{result.message}</p>}
+  </div>;
+}

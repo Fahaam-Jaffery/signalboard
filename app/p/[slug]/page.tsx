@@ -39,6 +39,19 @@ export default async function PublicPage({ params }: Props) {
   const { slug } = await params;
   const page = await getPage(slug);
   if (!page) notFound();
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const emailConfirmed = Boolean(user?.email_confirmed_at);
+  let membershipStatus: "legacy" | "pending" | "verified" | "flagged" | null = null;
+  if (user) {
+    const { data: membership } = await supabase
+      .from("waitlist")
+      .select("verification_status")
+      .eq("landing_page_id", page.id)
+      .eq("user_id", user.id)
+      .maybeSingle();
+    membershipStatus = membership?.verification_status || null;
+  }
 
   const raw = (page.content || {}) as Record<string, unknown>;
   const generated = validateLandingPageConfig(raw) ? raw as LandingPageConfig : null;
@@ -76,7 +89,7 @@ export default async function PublicPage({ params }: Props) {
           <h1 className={`mx-auto mt-8 max-w-5xl font-semibold leading-[.98] tracking-[-.065em] ${generated?.layout === "bold" ? "text-6xl sm:text-8xl lg:text-[7rem]" : generated?.layout === "editorial" ? "text-4xl sm:text-6xl lg:text-[5rem]" : "text-5xl sm:text-7xl lg:text-[5.8rem]"}`}>{headline}</h1>
           <p className="mx-auto mt-7 max-w-2xl text-base leading-8 text-[#777287] sm:text-xl">{subheadline}</p>
           <div id="join" className="mx-auto mt-9 max-w-md scroll-mt-8 rounded-3xl border border-black/[.07] bg-white/90 p-3 shadow-[0_24px_80px_rgba(35,25,65,.10)] sm:p-4">
-            <WaitlistForm slug={slug}/>
+            <WaitlistForm slug={slug} initialStatus={membershipStatus} isAuthenticated={Boolean(user)} emailConfirmed={emailConfirmed}/>
             <p className="mt-3 text-[10px] text-[#9691a6]">No spam. Just thoughtful updates when there’s something worth sharing.</p>
           </div>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-xs text-[#777287]"><span className="inline-flex items-center gap-1.5"><Check size={14} style={{ color: theme.accent }}/> Free early access</span><span className="inline-flex items-center gap-1.5"><Check size={14} style={{ color: theme.accent }}/> Built around feedback</span><span className="inline-flex items-center gap-1.5"><Check size={14} style={{ color: theme.accent }}/> Leave whenever you want</span></div>
