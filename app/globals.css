@@ -842,14 +842,12 @@ button.live-metric-card:hover { transform:translateY(-2px); border-color:rgba(16
 }
 .auth-form-shell button[type="submit"]:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 12px 32px rgba(109,105,255,.2), inset 0 1px rgba(255,255,255,.9); }
 .auth-form-shell button:disabled { opacity: .68; }
-.auth-form-shell button[variant="outline"],
-.auth-form-shell button.border-input {
+.auth-form-shell > button {
   color: #e6e7f2;
   border-color: rgba(255,255,255,.13);
   background: rgba(255,255,255,.035);
 }
-.auth-form-shell button[variant="outline"]:hover,
-.auth-form-shell button.border-input:hover { background: rgba(255,255,255,.075); border-color: rgba(255,255,255,.23); }
+.auth-form-shell > button:hover:not(:disabled) { background: rgba(255,255,255,.075); border-color: rgba(255,255,255,.23); }
 .auth-form-shell a.font-semibold { color: #bcb2ff; }
 .auth-form-shell a.font-semibold:hover { color: #ded9ff; }
 .auth-story-panel {
@@ -905,3 +903,24 @@ button.live-metric-card:hover { transform:translateY(-2px); border-color:rgba(16
 @media (prefers-reduced-motion: reduce) {
   .auth-form-shell button, .auth-form-shell input, .auth-form-shell > a:first-child { transition: none !important; }
 }
+
+
+/* The studio banner and its loading state use the same product canvas as the workspace. */
+.dashboard-top-banner {
+  color: #f1f2f8;
+  border-color: rgba(255,255,255,.09);
+  background: linear-gradient(100deg, rgba(115,96,255,.095), rgba(56,170,207,.035) 60%, rgba(255,255,255,.012)), #0b0c12;
+}
+.dashboard-top-banner .muted { color: rgba(221,224,240,.56); }
+.dashboard-top-banner .text-violet-600 { color: #b9b0ff !important; }
+.dashboard-top-banner [class~="bg-violet-600"] { background: #8b7cff !important; color: #10101a !important; }
+.dashboard-top-banner [class~="bg-violet-500/10"] { background: rgba(139,124,255,.13) !important; }
+.light .dashboard-top-banner {
+  color: #191a26;
+  border-color: rgba(40,40,65,.1);
+  background: linear-gradient(100deg, rgba(115,96,255,.075), rgba(56,170,207,.025) 60%, #fff), #f7f7fc;
+}
+.light .dashboard-top-banner .muted { color: #66697e; }
+.light .dashboard-top-banner .text-violet-600 { color: #6250d8 !important; }
+.light .dashboard-top-banner [class~="bg-violet-600"] { background: #6953f5 !important; color: #fff !important; }
+.light .dashboard-top-banner [class~="bg-violet-500/10"] { background: rgba(105,83,245,.1) !important; }
