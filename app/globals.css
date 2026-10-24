@@ -699,8 +699,8 @@ button.live-metric-card:hover { transform:translateY(-2px); border-color:rgba(16
 .cinematic-dashboard .text-cyan-600 { color: #8ce5f8 !important; }
 .cinematic-dashboard .text-fuchsia-600 { color: #f0a7df !important; }
 .cinematic-dashboard .text-amber-600 { color: #f1ce8c !important; }
-.cinematic-dashboard .bg-violet-600 { background-color: #8b7cff !important; }
-.cinematic-dashboard .bg-violet-600.text-white { color: #10101a !important; }
+.cinematic-dashboard .bg-violet-600 { background-color: #6754e8 !important; color: #fff !important; }
+.cinematic-dashboard .bg-violet-600.text-white { color: #fff !important; }
 .cinematic-dashboard [class~="hover:bg-violet-500"]:hover { background-color: #a093ff !important; }
 .cinematic-dashboard [class~="bg-violet-500/10"] { background-color: rgba(139,124,255,.13) !important; }
 .cinematic-dashboard [class~="bg-cyan-500/10"] { background-color: rgba(78,207,235,.12) !important; }
@@ -913,7 +913,7 @@ button.live-metric-card:hover { transform:translateY(-2px); border-color:rgba(16
 }
 .dashboard-top-banner .muted { color: rgba(221,224,240,.56); }
 .dashboard-top-banner .text-violet-600 { color: #b9b0ff !important; }
-.dashboard-top-banner [class~="bg-violet-600"] { background: #8b7cff !important; color: #10101a !important; }
+.dashboard-top-banner [class~="bg-violet-600"] { background: #6754e8 !important; color: #fff !important; }
 .dashboard-top-banner [class~="bg-violet-500/10"] { background: rgba(139,124,255,.13) !important; }
 .light .dashboard-top-banner {
   color: #191a26;
@@ -935,4 +935,15 @@ button.live-metric-card:hover { transform:translateY(-2px); border-color:rgba(16
 .dark .cinematic-dashboard .surface:hover {
   border-color: rgba(161,148,255,.26);
   box-shadow: 0 16px 38px rgba(0,0,0,.18), 0 0 28px rgba(119,99,255,.045), inset 0 1px rgba(255,255,255,.04);
+}
+
+
+/* Primary actions stay crisp and readable against the dark product canvas. */
+.cinematic-dashboard form button[type="submit"] {
+  color: #fff !important;
+  background: #6754e8 !important;
+  border-color: rgba(191,181,255,.32);
+}
+.cinematic-dashboard form button[type="submit"]:hover:not(:disabled) {
+  background: #7765f0 !important;
 }
