@@ -6,7 +6,7 @@
 - Only **verified** signups count in the validation dashboard's headline totals and time series.
 - Existing records are preserved as `legacy` and excluded from confirmed metrics; they are never silently upgraded to verified.
 - Email addresses are trimmed/lowercased and protected by a database-enforced case-insensitive, per-page unique index.
-- Database-backed limits allow at most 12 requests per IP key and 3 per email key per hour.
+- Database-backed limits request a Turnstile challenge after 5 requests per IP key or 2 per email key per hour, then hard-limit at 12 per IP key or 5 per email key per hour.
 - A hidden honeypot catches simple bots.
 - A signed, HttpOnly, SameSite=Lax cookie remembers pending/verified membership on refresh without putting an email address in the cookie.
 - Verification tokens are stored as hashes, expire after 30 minutes, and are single-use. The email-link GET is side-effect-free so common email link scanners do not automatically verify a signup.
@@ -19,6 +19,7 @@ Set these **server-side** variables in Vercel (Preview and Production as appropr
 - `WAITLIST_COOKIE_SECRET`: a private random secret of at least 32 characters. Keep the same value across deployments so existing membership cookies remain valid.
 - `RESEND_API_KEY`: API key from Resend.
 - `WAITLIST_EMAIL_FROM`: sender identity on a domain verified with Resend, for example `SignalBoard <waitlist@your-verified-domain.com>`.
+- Optional adaptive challenge: `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY` from Cloudflare Turnstile. Configure both to challenge higher-risk traffic; without both keys, requests are still rate-limited but no interactive challenge is shown.
 - `NEXT_PUBLIC_SITE_URL`: exact public origin used in confirmation links, with no trailing slash (for production, `https://signalsboard.vercel.app`).
 
 Resend currently advertises a $0 transactional-email tier with 3,000 emails/month and a 100/day limit. Sending from a production sender generally requires a domain you control and have verified. Check the provider's current terms before launch: https://www.resend.com/pricing?product=transactional
@@ -55,5 +56,5 @@ After migration, old rows remain `legacy`. A legacy address is moved to `pending
 
 - Email confirmation proves access to an inbox at that moment, not that the person is unique, human, or a qualified customer.
 - MX/DNS checks cannot prove a specific mailbox exists and are not used as a false-positive-prone gate.
-- This first pass uses a honeypot and durable server-side rate limits. A Cloudflare Turnstile challenge for higher-risk traffic should be added after site/secret keys are configured; do not treat the honeypot alone as enterprise bot protection.
+- Turnstile is optional until both Cloudflare keys are configured. With both keys present, higher-risk traffic is challenged; do not treat the honeypot alone as enterprise bot protection.
 - Delivery/bounce webhooks, disposable-domain intelligence, and automated pruning/retention are follow-up work. Do not represent a pending or legacy row as verified.
