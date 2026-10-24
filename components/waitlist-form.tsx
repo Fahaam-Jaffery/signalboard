@@ -60,8 +60,8 @@ export function WaitlistForm({
       <p className="mt-3 text-sm font-semibold text-[#211b35]">Sign in to save your spot</p>
       <p className="mt-1 text-xs leading-5 text-[#777287]">Your SignalBoard account keeps your subscription saved, even after you refresh or return later.</p>
       <div className="mt-4 flex flex-col justify-center gap-2 sm:flex-row">
-        <Button asChild size="lg" className="h-11 rounded-xl"><Link href={"/login?next=" + next}>Sign in <ArrowRight size={15} /></Link></Button>
-        <Button asChild variant="outline" size="lg" className="h-11 rounded-xl"><Link href={"/signup?next=" + next}>Create account</Link></Button>
+        <Link href={"/login?next=" + next} className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-violet-600 px-6 text-sm font-semibold text-white transition-colors hover:bg-violet-500">Sign in <ArrowRight size={15} /></Link>
+        <Link href={"/signup?next=" + next} className="inline-flex h-11 items-center justify-center rounded-xl border border-[#e3deee] bg-white px-6 text-sm font-semibold text-[#211b35] transition-colors hover:bg-[#f8f6ff]">Create account</Link>
       </div>
     </div>;
   }
