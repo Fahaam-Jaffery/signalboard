@@ -6,8 +6,8 @@ function Skeleton({ className = "" }: { className?: string }) {
 
 export default function DashboardLoading() {
   return (
-    <main aria-busy="true" aria-label="Loading your SignalBoard workspace" className="min-h-screen">
-      <div className="border-b border-[rgb(var(--border))] bg-violet-500/[.04] px-5 py-4 sm:px-10">
+    <main aria-busy="true" aria-label="Loading your SignalBoard workspace" className="cinematic-dashboard min-h-screen">
+      <div className="dashboard-top-banner border-b border-[rgb(var(--border))] px-5 py-4 sm:px-10">
         <div className="mx-auto flex max-w-7xl items-center gap-3">
           <div className="grid h-10 w-10 place-items-center rounded-xl bg-violet-500/10 text-violet-600"><CircleDot size={19} /></div>
           <div className="flex-1 space-y-2">
