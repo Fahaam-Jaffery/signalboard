@@ -51,6 +51,11 @@ declare
   v_ip_hits integer;
   v_email_hits integer;
 begin
+  delete from private.waitlist_rate_limits where window_start < now() - interval '48 hours';
+  delete from private.waitlist_verification_tokens
+    where expires_at < now() - interval '2 days'
+       or (used_at is not null and used_at < now() - interval '2 days');
+
   if p_slug is null or length(p_slug) > 180
      or p_email is null or length(p_email) > 254
      or p_token_hash is null or length(p_token_hash) > 128
