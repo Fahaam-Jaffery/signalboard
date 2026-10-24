@@ -4,7 +4,7 @@ import { keyedHash, newVerificationToken, setMembershipCookie } from "@/lib/wait
 
 export const runtime = "nodejs";
 
-type RequestBody = { slug?: unknown; email?: unknown; website?: unknown };
+type RequestBody = { slug?: unknown; email?: unknown; website?: unknown; turnstileToken?: unknown };
 
 function validEmail(email: string) {
   if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return false;
@@ -37,6 +37,27 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Enter a valid email address." }, { status: 400 });
   }
 
+  let challengePassed = false;
+  const turnstileToken = typeof body.turnstileToken === "string" ? body.turnstileToken : "";
+  if (turnstileToken) {
+    const secret = process.env.TURNSTILE_SECRET_KEY;
+    if (!secret) return NextResponse.json({ error: "Bot challenge is not configured." }, { status: 503 });
+    try {
+      const clientIp = request.headers.get("x-real-ip") || request.headers.get("x-vercel-forwarded-for")?.split(",")[0]?.trim() || request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+      const verification = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ secret, response: turnstileToken, ...(clientIp ? { remoteip: clientIp } : {}) }),
+        cache: "no-store",
+      });
+      const result = await verification.json();
+      challengePassed = Boolean(verification.ok && result.success);
+    } catch {
+      challengePassed = false;
+    }
+    if (!challengePassed) return NextResponse.json({ error: "The bot check could not be verified. Please try again." }, { status: 400 });
+  }
+
   try {
     const supabase = createWaitlistAdminClient();
     const { token, tokenHash } = newVerificationToken();
@@ -51,6 +72,7 @@ export async function POST(request: Request) {
       p_token_hash: tokenHash,
       p_ip_key_hash: keyedHash("ip:" + clientIp),
       p_email_key_hash: keyedHash("email:" + email),
+      p_challenge_passed: challengePassed,
     });
 
     if (error || !data) {
@@ -59,6 +81,11 @@ export async function POST(request: Request) {
     }
     if (!data.ok && data.reason === "not_found") {
       return NextResponse.json({ error: "This page could not be found." }, { status: 404 });
+    }
+    if (!data.ok && data.reason === "challenge_required") {
+      const challengeConfigured = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && process.env.TURNSTILE_SECRET_KEY);
+      if (challengeConfigured) return NextResponse.json({ error: "Please complete the quick bot check to continue.", challengeRequired: true }, { status: 428 });
+      return NextResponse.json({ error: "Too many attempts. Please wait a little before trying again." }, { status: 429 });
     }
     if (!data.ok && data.reason === "rate_limited") {
       return NextResponse.json({ error: "Too many attempts. Please wait a little before trying again." }, { status: 429 });
