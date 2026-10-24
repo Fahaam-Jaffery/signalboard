@@ -40,7 +40,7 @@ export default async function DashboardPage() {
   const pages = rawPages.map(page => ({ ...page, waitlist_count: counts.get(page.id) || 0 }));
   return (
     <>
-      <div className="border-b border-[rgb(var(--border))] bg-violet-500/[.04] px-5 py-4 sm:px-10">
+      <div className="dashboard-top-banner border-b border-[rgb(var(--border))] px-5 py-4 sm:px-10">
         <div className="mx-auto flex max-w-7xl flex-col justify-between gap-3 sm:flex-row sm:items-center">
           <div className="flex items-center gap-3">
             <span className="grid h-10 w-10 place-items-center rounded-xl bg-violet-500/10 text-violet-600"><Blocks size={19} /></span>
