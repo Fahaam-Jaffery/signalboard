@@ -37,7 +37,8 @@ create or replace function public.begin_waitlist_verification(
   p_email text,
   p_token_hash text,
   p_ip_key_hash text,
-  p_email_key_hash text
+  p_email_key_hash text,
+  p_challenge_passed boolean default false
 ) returns jsonb
 language plpgsql
 security definer
@@ -76,8 +77,11 @@ begin
     set hits = private.waitlist_rate_limits.hits + 1
   returning hits into v_email_hits;
 
-  if v_ip_hits > 12 or v_email_hits > 3 then
+  if v_ip_hits > 12 or v_email_hits > 5 then
     return jsonb_build_object('ok', false, 'reason', 'rate_limited');
+  end if;
+  if (v_ip_hits > 5 or v_email_hits > 2) and not coalesce(p_challenge_passed, false) then
+    return jsonb_build_object('ok', false, 'reason', 'challenge_required');
   end if;
 
   select id into v_page_id
@@ -179,7 +183,7 @@ as $$
   limit 1;
 $$;
 
-revoke all on function public.begin_waitlist_verification(text, text, text, text, text) from public, anon, authenticated;
+revoke all on function public.begin_waitlist_verification(text, text, text, text, text, boolean) from public, anon, authenticated;
 revoke all on function public.verify_waitlist_email(text) from public, anon, authenticated;
 revoke all on function public.get_waitlist_membership_status(uuid, uuid) from public, anon, authenticated;
 grant execute on function public.begin_waitlist_verification(text, text, text, text, text) to service_role;
