@@ -781,7 +781,7 @@ button.live-metric-card:hover { transform:translateY(-2px); border-color:rgba(16
   background: #08090e;
   isolation: isolate;
   position: relative;
-  overflow: hidden;
+  overflow-x: clip;
 }
 .auth-experience::before {
   content: "";
@@ -924,3 +924,15 @@ button.live-metric-card:hover { transform:translateY(-2px); border-color:rgba(16
 .light .dashboard-top-banner .text-violet-600 { color: #6250d8 !important; }
 .light .dashboard-top-banner [class~="bg-violet-600"] { background: #6953f5 !important; color: #fff !important; }
 .light .dashboard-top-banner [class~="bg-violet-500/10"] { background: rgba(105,83,245,.1) !important; }
+
+
+/* Match the pre-existing dark-mode hover rules to the new surface recipe. */
+.dark .cinematic-dashboard .surface {
+  background: linear-gradient(145deg, rgba(21,23,35,.96), rgba(15,17,27,.96));
+  border-color: rgba(255,255,255,.09);
+  box-shadow: 0 12px 35px rgba(0,0,0,.11), inset 0 1px rgba(255,255,255,.025);
+}
+.dark .cinematic-dashboard .surface:hover {
+  border-color: rgba(161,148,255,.26);
+  box-shadow: 0 16px 38px rgba(0,0,0,.18), 0 0 28px rgba(119,99,255,.045), inset 0 1px rgba(255,255,255,.04);
+}
